@@ -1,0 +1,29 @@
+{
+  "name": "searchengineweb",
+  "description": "web pages for Search Engine",
+  "main": "server/app.js",
+  "authors": [
+    "zhi"
+  ],
+  "license": "ISC",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "angularjs#^1.6.8",
+    "jquery": "^3.3.1",
+    "angular-chart.js": "^1.1.1",
+    "angular-spinner": "^1.0.1",
+    "angular-ui-router": "^1.0.14",
+    "angular-moment": "^1.2.0",
+    "angular-cookies": "^1.6.9",
+    "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0",
+    "angular-translate": "^2.17.0",
+    "angular-ui-notification": "^0.3.6"
+  },
+  "appPath": "app"
+}

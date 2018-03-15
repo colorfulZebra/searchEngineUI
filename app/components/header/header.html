@@ -1,0 +1,113 @@
+<div ng-controller="HeaderCtrl">
+  <!-- Navigator bar -->
+  <nav class="uk-navbar uk-width-1-1 uk-grid uk-grid-collapse">
+    <div class="uk-width-8-10 uk-container-center">
+      <a class="uk-navbar-brand" ui-sref="search"><img src="images/ocsearch.png" style="height: 30px;" alt="searchengine" title="searchengine"></a>
+      <div class="uk-navbar-flip">
+        <ul class="uk-navbar-nav">
+          <li ng-if="functions.isLogin()" class="uk-parent" data-uk-dropdown>
+            <a href="javascript:void(0)">
+              <i class="fas fa-cogs"></i>
+              <span>{{functions.getUsername()}}</span>
+            </a>
+            <div class="uk-dropdown uk-dropdown-navbar">
+              <ul class="uk-nav uk-nav-navbar">
+                <li>
+                  <a href="javascript:void(0)" class="uk-dropdown-close" ng-click="changepwd()">
+                    <i class="fas fa-edit"></i>
+                    <span>{{'CHANGE_PASSWORD' | translate}}</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" class="uk-dropdown-close" ng-click="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>{{'LOGOUT' | translate}}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li ng-if="!functions.isLogin()">
+            <a href="javascript:void(0)" ng-click="login()">
+              <i class="fas fa-sign-in-alt"></i>
+              <span>{{'LOGIN' | translate}}</span>
+            </a>
+          </li>
+          <li ng-class="{'uk-active': global.tab === 'monitor'}" ng-if="functions.isLogin()&&functions.isAdmin()">
+            <a ui-sref="monitor" ng-click="functions.click('monitor')">
+              <i class="fas fa-desktop"></i>
+              <span>{{'MONITOR' | translate}}</span>
+            </a>
+          </li>
+          <li ng-class="{'uk-active': global.tab === 'user'}" ng-if="functions.isLogin()&&functions.isAdmin()">
+            <a ui-sref="user" ng-click="functions.click('user')">
+              <i class="fas fa-user"></i>
+              <span>{{'USER' | translate}}</span>
+            </a>
+          </li>
+          <li ng-class="{'uk-active': global.tab === 'schema'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
+            <a ui-sref="schema" ng-click="functions.click('schema')">
+              <i class="fas fa-book"></i>
+              <span>{{'SCHEMA' | translate}}</span>
+            </a>
+          </li>
+          <li ng-class="{'uk-active': global.tab === 'table'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
+            <a ui-sref="table" ng-click="functions.click('table')">
+              <i class="fas fa-table"></i>
+              <span>{{'TABLE' | translate}}</span>
+            </a>
+          </li>
+          <li ng-class="{'uk-active': global.tab === 'search'}">
+            <a ui-sref="search" ng-click="functions.click('search')">
+              <i class="fas fa-search search-icon"></i>
+              <span>{{'SEARCH' | translate}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- End of Nav Bar -->
+  <!-- Change password dialog -->
+  <div id="changePwdDlg" class="uk-modal">
+    <div class="uk-modal-dialog">
+      <a class="uk-modal-close uk-close"></a>
+      <div class="uk-modal-header">
+        <h2>{{'CHANGE_PASSWORD' | translate}}</h2><hr>
+      </div>
+      <form class="uk-form uk-form-horizontal">
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'USERNAME' | translate}}*</label>
+          <div class="uk-form-controls">
+            <input type="text" class="uk-width-1-1" ng-model="changepwd_login.name" disabled>
+          </div>
+        </div>
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'PASSWORD' | translate}}*</label>
+          <div class="uk-form-controls">
+            <input type="password" class="uk-width-1-1" ng-model="changepwd_login.password" ng-change="updatePassword()">
+          </div>
+        </div>
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'REPASSWORD' | translate}}*</label>
+          <div class="uk-form-controls">
+            <input type="password" class="uk-width-1-1" ng-model="changepwd_login.repeat" ng-change="updateRepeat()">
+          </div>
+        </div>
+      </form>
+      <div class="uk-modal-footer">
+        <hr>
+        <div class="uk-clearfix">
+          <div class="uk-float-left">
+            <b style="color: red;">{{changepwd_dlgmessage | translate}}</b>
+          </div>
+          <div class="uk-float-right">
+            <button type="button" class="uk-button uk-button-success" ng-click="changepwd_ok()" ng-disabled="!changepwd_validate">{{'OK' | translate}}</button>
+            <button type="button" class="uk-button uk-button-primary uk-modal-close">{{'CANCEL' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End of change password dialog -->
+</div>

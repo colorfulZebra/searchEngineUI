@@ -1,0 +1,58 @@
+<div ng-include="'components/header/header.html'"></div>
+<!--
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-offset-1 col-lg-10">
+      <div class="panel panel-default box">
+        <div class="panel-heading"><br></div>
+        <div class="panel-body">
+          <div ng-repeat="item in status.data" ng-init="outeridx=$index" style="margin-bottom: 50px;">
+            <h4>{{item.name}}</h4><hr>
+            <table class="table table-condensed" style="margin-top: 20px;">
+              <tr>
+                <th ng-repeat="c in status.getColumn(outeridx)">{{c | capitalsplit}}<a ng-if="item.name==='timers' && c==='class'" class="caret" href="" ng-click="sortTimers()"></a></th>
+                <th ng-if="item.name==='timers'">{{'DISPLAY' | translate}}</th>
+              </tr>
+              <tr ng-repeat="record in item.info">
+                <td ng-repeat="c in status.getColumn(outeridx)">
+                  {{record[c] | contentfilter}}
+                </td>
+                <td ng-if="item.name==='timers'">
+                  <input type="checkbox" class="checkbox" ng-model="record.actived" ng-click="checkService($index)">
+                </td>
+              </tr>
+            </table>
+            <div ng-if="item.name === 'timers'" style="margin-top: 10px;">
+              <canvas id="line" class="chart chart-line" style="width: 1000px;height: 150px" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+<div class="uk-width-7-10 uk-container-center">
+  <div class="uk-panel">
+    <div ng-repeat="item in status.data" ng-init="outeridx=$index" class="uk-margin-top">
+      <h3 class="uk-panel-title">{{item.name}}</h3><hr>
+      <table class="uk-table uk-table-striped uk-table-condensed">
+        <thead>
+          <tr>
+            <th ng-repeat="c in status.getColumn(outeridx)">{{c | capitalsplit}}<a class="uk-float-right" ng-if="item.name==='timers' && c==='class'" href="javascript:void(0)" ng-click="sortTimers()"><i class="uk-icon-caret-square-o-down"></i></a></th>
+            <th ng-if="item.name==='timers'">{{'DISPLAY' | translate}}</th>
+          </tr>
+          <tbody>
+            <tr ng-repeat="record in item.info">
+              <td ng-repeat="c in status.getColumn(outeridx)">{{record[c] | contentfilter}}</td>
+              <td ng-if="item.name==='timers'"><input type="checkbox" ng-model="record.actived" ng-click="checkService($index)"></td>
+            </tr>
+          </tbody>
+        </thead>
+      </table>
+      <div ng-if="item.name === 'timers'" style="margin-top: 10px;">
+        <canvas id="line" class="chart chart-line" style="width: 1000px;height: 150px" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options"></canvas>
+      </div>
+    </div>
+  </div>
+</div>

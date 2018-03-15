@@ -1,0 +1,89 @@
+<div ng-include="'components/header/header.html'"></div>
+<!-- User dialog (new/edit) -->
+<div id="userDlg" class="uk-modal">
+  <div class="uk-modal-dialog">
+    <a class="uk-modal-close uk-close"></a>
+    <div class="uk-modal-header">
+      <h2 ng-if="!editflag">{{'ADD_NEW_USER' | translate}}</h2>
+      <h2 ng-if="editflag">{{'UPDATE_USER' | translate}}</h2>
+      <hr>
+    </div>
+    <form class="uk-form uk-form-horizontal">
+      <div class="uk-form-row">
+        <label class="uk-form-label">{{'USERNAME' | translate}}*</label>
+        <div class="uk-form-controls">
+          <input type="text" class="uk-width-1-1" ng-model="userLogin.name" ng-disabled="editflag" ng-change="dlgUpdateName()">
+        </div>
+      </div>
+      <div class="uk-form-row">
+        <label class="uk-form-label">{{'PASSWORD' | translate}}*</label>
+        <div class="uk-form-controls">
+          <input type="password" class="uk-width-1-1" ng-model="userLogin.password" ng-change="dlgUpdatePassword()">
+        </div>
+      </div>
+      <div class="uk-form-row">
+        <label class="uk-form-label">{{'REPASSWORD' | translate}}*</label>
+        <div class="uk-form-controls">
+          <input type="password" class="uk-width-1-1" ng-model="userLogin.repeat" ng-change="dlgUpdateRepeat()">
+        </div>
+      </div>
+    </form>
+    <div class="uk-modal-footer">
+      <hr>
+      <div class="uk-clearfix">
+        <div class="uk-float-left">
+          <b style="color: red;">{{dlgmessage | translate}}</b>
+        </div>
+        <div class="uk-float-right">
+          <button class="uk-button uk-button-success" ng-disabled="!validate" ng-click="dlgOK()">{{'OK' | translate}}</button>
+          <button class="uk-button uk-button-primary uk-modal-close">{{'CANCEL' | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of user dialog (new/edit) -->
+<!-- User main page -->
+<div class="uk-width-4-5 uk-container-center uk-margin">
+  <div class="uk-grid uk-grid-collapse">
+    <div class="uk-width-1-5 uk-container">
+      <ul class="uk-tab uk-tab-left">
+        <li>
+          <button class="uk-button uk-button-primary uk-width-1-1" ng-click="addUser()">{{'ADD' | translate}}</button>
+        </li>
+        <li ng-repeat="user in users" ng-class="{'uk-active': user.actived}">
+          <a class="uk-width-1-1" href="javascript:void(0)" style="color: dimgrey;" ng-click="chooseUser($index)">{{user.name}}</a>
+        </li>
+        <li>&nbsp;</li>
+      </ul>
+    </div>
+    <div class="uk-width-4-5 uk-container uk-margin-top">
+      <div class="uk-panel">
+        <div class="uk-panel-badge uk-badge uk-padding-remove" style="background-color: rgba(0,0,0,0);">
+          <button class="uk-button uk-button-danger uk-margin-small-right" ng-disabled="page.user.isAdmin()" ng-click="deleteUser()"><i class="fas fa-trash-alt"></i></button>
+          <button class="uk-button" ng-click="editUser()" ng-disabled="page.user.isAdmin()"><i class="fas fa-edit"></i></button>
+        </div>
+        <h3 class="uk-panel-title">{{'BASIC_INFO' | translate}}</h3><hr>
+        <div class="uk-grid uk-margin-large-bottom">
+          <div class="uk-width-1-2">{{'USERNAME' | translate}}: {{page.user.name}}</div>
+          <div class="uk-width-1-2">{{'DESCRIPTION' | translate}}: {{page.user.description || ('NULL' | translate)}}</div>
+        </div>
+        <h3 class="uk-panel-title">{{'SCHEMA' | translate}}</h3><hr>
+        <div class="uk-width-1-1 uk-margin-large-bottom">
+          <ul class="uk-breadcrumb">
+            <li ng-if="page.user.schemas.length===0">{{'NULL' | translate}}</li>
+            <li ng-repeat="schema in page.user.schemas">{{schema}}</li>
+          </ul>
+        </div>
+        <h3 class="uk-panel-title">{{'TABLE' | translate}}</h3><hr>
+        <div class="uk-width-1-1">
+          <ul class="uk-breadcrumb">
+            <li ng-if="page.user.tables.length===0">{{'NULL' | translate}}</li>
+            <li ng-repeat="table in page.user.tables">{{table}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of user main page -->

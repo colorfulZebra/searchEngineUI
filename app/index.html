@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html ng-app="basic">
+<head>
+  <meta charset="utf-8">
+  <title>OCSearch</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+  <!-- build:css(.) styles/vendor.css -->
+  <!-- bower:css -->
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:css(app) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="uikit/css/uikit.min.css">
+  <link rel="stylesheet" href="uikit/css/components/tooltip.min.css">
+  <!-- endbuild -->
+</head>
+<body ng-app="basic">
+  <!--[if lte IE 8]>
+  <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <!-- Add your site or application content here -->
+  <span us-spinner="{color:'orange',lines:10,radius:60,width:20,length:40}" spinner-key="spinner"></span>
+  <span us-spinner="{color:'orange',lines:10,radius:60,width:20,length:40}" spinner-key="manualspinner"></span>
+  <ui-view></ui-view>
+  <footer class="uk-width-1-1 footer">
+    <div class="uk-width-9-10 uk-container-center" style="margin-top: 15px;">
+      © Copyright OCSearch 2018
+    </div>
+  </footer>
+
+  <!-- build:js(.) scripts/vendor.js -->
+  <!-- bower:js -->
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:js(app) scripts/scripts.js -->
+  <!-- 3rd party packages should lay before scripts in projects-->
+  <!-- UI kit -->
+  <script src="uikit/js/uikit.min.js"></script>
+  <script src="uikit/js/components/tooltip.min.js"></script>
+  <script src="fontawesome/svg-with-js/js/fontawesome-all.min.js"></script>
+  <!-- Util component -->
+  <script src="./app.js"></script>
+  <script src="components/util/lang_zh.js"></script>
+  <script src="components/util/lang_en.js"></script>
+  <script src="components/util/spinner.js"></script>
+  <script src="components/util/uiHelper.js"></script>
+  <script src="components/util/utilFty.js"></script>
+  <!-- Header component -->
+  <script src="components/header/headerCtrl.js"></script>
+  <script src="components/header/loginFty.js"></script>
+  <!-- Monitor component -->
+  <script src="components/monitor/statusFty.js"></script>
+  <script src="components/monitor/lineFty.js"></script>
+  <script src="components/monitor/monitorCtrl.js"></script>
+  <script src="components/monitor/monitorServe.js"></script>
+  <!-- Result component -->
+  <script src="components/result/resultCtrl.js"></script>
+  <script src="components/result/detailCtrl.js"></script>
+  <!-- Schema component -->
+  <script src="components/schema/fieldFty.js"></script>
+  <script src="components/schema/schemaFty.js"></script>
+  <script src="components/schema/expressionFty.js"></script>
+  <script src="components/schema/expfunctionFty.js"></script>
+  <script src="components/schema/schemaCtrl.js"></script>
+  <script src="components/schema/schemaServe.js"></script>
+  <!-- Table component -->
+  <script src="components/table/tableFty.js"></script>
+  <script src="components/table/hostFty.js"></script>
+  <script src="components/table/tableCtrl.js"></script>
+  <script src="components/table/tableServe.js"></script>
+  <!-- Search component -->
+  <script src="components/search/searchCtrl.js"></script>
+  <script src="components/search/searchServe.js"></script>
+  <!-- User component -->
+  <script src="components/user/userFty.js"></script>
+  <script src="components/user/userCtrl.js"></script>
+  <script src="components/user/userServe.js"></script>
+  <!-- endbuild -->
+</body>
+</html>
