@@ -26,7 +26,10 @@
                 <h4>{{'EXPLANATION' | translate}}</h4>
                 <p>{{'HBASE_INDEXER_SOLR_EXPLAIN' | translate}}</p>
               </div>
-              <a href="javascript:void(0)"></a>
+              <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===0">
+                <i class="fas fa-check tick-img"></i>
+              </div>
+              <a href="javascript:void(0)" class="uk-position-cover" ng-click="addSchemaChooseType(0)"></a>
             </figure>
           </div>
           <div class="uk-width-1-2">
@@ -44,7 +47,10 @@
                 <h4>{{'EXPLANATION' | translate}}</h4>
                 <p>{{'HBASE_ONLY' | translate}}</p>
               </div>
-              <a href="javascript:void(0)"></a>
+              <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===-1">
+                <i class="fas fa-check tick-img"></i>
+              </div>
+              <a href="javascript:void(0)" class="uk-position-cover" ng-click="addSchemaChooseType(-1)"></a>
             </figure>
           </div>
           <div class="uk-width-1-1"><br></div>
@@ -64,7 +70,10 @@
                 <h4>{{'EXPLANATION' | translate}}</h4>
                 <p>{{'HBASE_PHOENIX_EXPLAIN' | translate}}</p>
               </div>
-              <a href="javascript:void(0)"></a>
+              <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===1">
+                <i class="fas fa-check tick-img"></i>
+              </div>
+              <a href="javascript:void(0)" class="uk-position-cover" ng-click="addSchemaChooseType(1)"></a>
             </figure>
           </div>
           <div class="uk-width-1-2">
@@ -91,7 +100,10 @@
                 <h4>{{'EXPLANATION' | translate}}</h4>
                 <p>{{'HBASE_SOLR_PHOENIX_EXPLAIN' | translate}}</p>
               </div>
-              <a href="javascript:void(0)"></a>
+              <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===2">
+                <i class="fas fa-check tick-img"></i>
+              </div>
+              <a href="javascript:void(0)" class="uk-position-cover" ng-click="addSchemaChooseType(2)"></a>
             </figure>
           </div>
         </div>
@@ -102,7 +114,7 @@
               <b style="color: red;">{{newschema.checkIndexType().message | translate}}</b>
             </div>
             <div class="uk-float-right">
-              <button class="uk-button uk-button-primary" type="button" ng-click="next()" ng-disabled="!newschema.checkIndexType().result">{{'NEXT' | translate}}</button>
+              <button class="uk-button uk-button-primary" type="button" ng-click="schemaDlgNext()" ng-disabled="!newschema.checkIndexType().result">{{'NEXT' | translate}}</button>
               <button class="uk-button uk-modal-close" type="button">{{'CANCEL' | translate}}</button>
             </div>
           </div>
@@ -112,8 +124,22 @@
       <!-- step 2 -->
       <div ng-switch-when="step2" class="uk-modal-dialog uk-modal-dialog-large">
         <a class="uk-modal-close uk-close"></a>
-        <div class="uk-modal-header"></div>
-        <div class="uk-modal-footer"></div>
+        <div class="uk-modal-header">
+          <h2>{{'BASIC_INFO' | translate}}</h2><hr class="uk-article-divider">
+        </div>
+        <div class="uk-modal-footer">
+          <hr class="uk-article-divider">
+          <div class="clearfix">
+            <div class="uk-float-left">
+              <b style="color: red;">{{newschema.checkBasicInfo(existed_schema_inmodal).message | translate}}</b>
+            </div>
+            <div class="uk-float-right">
+              <button ng-if="!editflag" class="btn btn-primary" uib-popover="{{'PREV_WARN' | translate}}" popover-trigger="'mouseenter'" popover-append-to-body="true" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
+              <button class="btn btn-primary" type="button" ng-click="next()" ng-disabled="!newschema.checkBasicInfo(existed_schema_inmodal).result">{{'NEXT' | translate}}</button>
+              <button class="btn btn-warning" type="button" ng-click="cancel()">{{'CANCEL' | translate}}</button>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- END of step 2 -->
       <!-- step 3 -->
@@ -152,88 +178,6 @@
 <script type="text/ng-template" id="addSchema.html">
   <form class="form-horizontal">
   <div ng-switch="addsteps[curstep]">
-    <div ng-switch-when="step1">
-      <div class="modal-header">
-        <h3 class="modal-title">{{'SCHEMA_TYPE' | translate}}</h3>
-      </div>
-      <div class="modal-body ocmodal-body ocmodal-body-lightgrey">
-        <div class="row">
-          <div class="col-md-offset-1 col-md-5">
-            <div class="ocmodal-body-opacity"><img src="images/solr_logo.png" style="width: 120px;"/><h5>{{'HBASE_INDEXER_SOLR' | translate}}</h5></div>
-            <div class="ocmodal-body-opacity-box" ng-click="chooseType(0)">
-              <h5>{{'HBASE_INDEXER_SOLR' | translate}}</h5>
-              <h5>{{'COMPONENT' | translate}}</h5>
-              <ul>
-                <li>{{'HBASE' | translate}}</li>
-                <li>{{'SOLR' | translate}}</li>
-              </ul>
-              <h5>{{'EXPLANATION' | translate}}</h5>
-              <p>{{'HBASE_INDEXER_SOLR_EXPLAIN' | translate}}</p>
-            </div>
-            <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===0"><img src="images/tick.png" /></div>
-          </div>
-          <div class="col-md-5">
-            <div class="ocmodal-body-opacity"><img src="images/hbase_logo.png"/><h5>{{'HBASE_ONLY' | translate}}</h5></div>
-            <div class="ocmodal-body-opacity-box" ng-click="chooseType(-1)">
-              <h5>{{'HBASE_ONLY' | translate}}</h5>
-              <h5>{{'COMPONENT' | translate}}</h5>
-              <ul>
-                <li>{{'HBASE' | translate}}</li>
-              </ul>
-              <h5>{{'EXPLANATION' | translate}}</h5>
-              <p>{{'HBASE_ONLY' | translate}}</p>
-            </div>
-            <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===-1"><img src="images/tick.png" /></div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-offset-1 col-md-5">
-            <div class="ocmodal-body-opacity"><img src="images/phoenix_logo.png"/><h5>{{'HBASE_PHOENIX' | translate}}</h5></div>
-            <div class="ocmodal-body-opacity-box" ng-click="chooseType(1)">
-              <h5>{{'HBASE_PHOENIX' | translate}}</h5>
-              <h5>{{'COMPONENT' | translate}}</h5>
-              <ul>
-                <li>{{'HBASE' | translate}}</li>
-                <li>{{'PHOENIX' | translate}}</li>
-              </ul>
-              <h5>{{'EXPLANATION' | translate}}</h5>
-              <p>{{'HBASE_PHOENIX_EXPLAIN' | translate}}</p>
-            </div>
-            <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===1"><img src="images/tick.png" /></div>
-          </div>
-          <div class="col-md-5">
-            <div class="ocmodal-body-opacity">
-              <div class="col-md-6">
-                <img src="images/solr_logo.png" style="width:110px;"/>
-              </div>
-              <div class="col-md-6">
-                <img src="images/phoenix_logo.png" style="height: 30px; margin-top: 60px;"/>
-              </div>
-              <div class="col-md-12">
-                <h5>{{'HBASE_SOLR_PHOENIX' | translate}}</h5>
-              </div>
-            </div>
-            <div class="ocmodal-body-opacity-box" ng-click="chooseType(2)">
-              <h5>{{'HBASE_SOLR_PHOENIX' | translate}}</h5>
-              <h5>{{'COMPONENT' | translate}}</h5>
-              <ul>
-                <li>{{'HBASE' | translate}}</li>
-                <li>{{'SOLR' | translate}}</li>
-                <li>{{'PHOENIX' | translate}}</li>
-              </ul>
-              <h5>{{'EXPLANATION' | translate}}</h5>
-              <p>{{'HBASE_SOLR_PHOENIX_EXPLAIN' | translate}}</p>
-            </div>
-            <div class="ocmodal-body-opacity-tick" ng-if="newschema.index_type===2"><img src="images/tick.png" /></div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <b class="pull-left" style="color: red;">{{newschema.checkIndexType().message | translate}}</b>
-        <button class="btn btn-primary" type="button" ng-click="next()" ng-disabled="!newschema.checkIndexType().result">{{'NEXT' | translate}}</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">{{'CANCEL' | translate}}</button>
-      </div>
-    </div>
     <div ng-switch-when="step2">
       <div class="modal-header">
         <h3 class="modal-title">{{'BASIC_INFO' | translate}}<font class="pull-right"><small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{getStep("step2")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{getTotalStep()}}{{'STEPS' | translate}}</small></font></h3>

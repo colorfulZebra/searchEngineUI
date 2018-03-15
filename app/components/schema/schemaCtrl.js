@@ -485,10 +485,48 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.addsteps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
     $scope.curstep = 0;
   };
+  $scope.schemaDlg_init();
+  $scope.schemaDlgNext = function() {
+    $scope.curstep = ($scope.curstep + 1) % $scope.addsteps.length;
+  };
+  $scope.schemaDlgPrev = function() {
+    $scope.curstep = ($scope.curstep - 1) % $scope.addsteps.length;
+  };
+  $scope.schemaDlgRemoveStep = function(name) {
+    let idx = $scope.addsteps.indexOf(name);
+    if (idx > 0) {
+      $scope.addsteps.splice(idx, 1);
+    }
+  };
+  $scope.schemaDlgRecoverStep = function(name) {
+    let idx = $scope.addsteps.indexOf(name);
+    if (idx < 0) {
+      // Add step
+      let newsteps = [];
+      ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'].map(step => {
+        if ($scope.addsteps.includes(step) || step===name) {
+          newsteps.push(step);
+        }
+      });
+      $scope.addsteps = newsteps;
+    }
+  };
+  $scope.addSchemaDlg_init = function() {
+    $scope.newschema = new CSchema({name: ''});
+  };
+  $scope.addSchemaChooseType = function(type) {
+    $scope.newschema.index_type = type;
+    if (type === 1) {
+      $scope.schemaDlgRemoveStep('step3');
+    } else {
+      $scope.schemaDlgRecoverStep('step3');
+    }
+  };
   $scope.addSchema = function() {
     if (!$rootScope.functions.initial()) { return; }
     $scope.schemaDlg_init();
     if (!schemaDlg.isActive()) {
+      $scope.addSchemaDlg_init();
       schemaDlg.show();
     }
     /*
