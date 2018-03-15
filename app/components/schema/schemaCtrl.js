@@ -486,6 +486,20 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.curstep = 0;
   };
   $scope.schemaDlg_init();
+  $scope.schemaDlgGetStep = function(name) {
+    if ($scope.editflag) {
+      return $scope.addsteps.indexOf(name)+1;
+    } else {
+      return $scope.addsteps.indexOf(name);
+    }
+  };
+  $scope.schemaDlgGetTotalStep = function() {
+    if ($scope.editflag) {
+      return $scope.addsteps.length;
+    } else {
+      return $scope.addsteps.length-1;
+    }
+  };
   $scope.schemaDlgNext = function() {
     $scope.curstep = ($scope.curstep + 1) % $scope.addsteps.length;
   };
@@ -512,7 +526,9 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     }
   };
   $scope.addSchemaDlg_init = function() {
+    $scope.editflag = false;
     $scope.newschema = new CSchema({name: ''});
+    $scope.existed_schema_inmodal = angular.copy($scope.existed_schemas);
   };
   $scope.addSchemaChooseType = function(type) {
     $scope.newschema.index_type = type;

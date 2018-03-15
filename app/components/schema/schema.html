@@ -5,13 +5,13 @@
     <div ng-switch="addsteps[curstep]">
       <!-- step 1 -->
       <div ng-switch-when="step1" class="uk-modal-dialog uk-modal-dialog-large">
-        <a class="uk-modal-close uk-close"></a>
+        <a class="uk-modal-close uk-close uk-close-alt"></a>
         <div class="uk-modal-header">
           <h2>{{'SCHEMA_TYPE' | translate}}</h2><hr class="uk-article-divider">
         </div>
-        <div class="uk-grid">
+        <div class="ocmodal-body uk-grid uk-container">
           <div class="uk-width-1-2">
-            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity">
+            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity uk-align-center">
               <div class="ocmodal-body-opacity-background uk-margin-large-top">
                 <img src="images/solr_logo.png">
                 <h3>{{'HBASE_INDEXER_SOLR' | translate}}</h3>
@@ -33,7 +33,7 @@
             </figure>
           </div>
           <div class="uk-width-1-2">
-            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity">
+            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity uk-align-center">
               <div class="ocmodal-body-opacity-background uk-margin-large-top">
                 <img src="images/hbase_logo.png"/>
                 <h3>{{'HBASE_ONLY' | translate}}</h3>
@@ -55,7 +55,7 @@
           </div>
           <div class="uk-width-1-1"><br></div>
           <div class="uk-width-1-2">
-            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity">
+            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity uk-align-center">
               <div class="ocmodal-body-opacity-background uk-margin-large-top">
                 <img src="images/phoenix_logo.png"/>
                 <h3>{{'HBASE_PHOENIX' | translate}}</h3>
@@ -77,7 +77,7 @@
             </figure>
           </div>
           <div class="uk-width-1-2">
-            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity">
+            <figure class="uk-overlay uk-overlay-hover ocmodal-body-opacity uk-align-center">
               <div class="ocmodal-body-opacity-background uk-margin-large-top">
                 <div class="uk-grid uk-grid-collapse">
                   <div class="uk-width-1-2">
@@ -125,18 +125,43 @@
       <div ng-switch-when="step2" class="uk-modal-dialog uk-modal-dialog-large">
         <a class="uk-modal-close uk-close"></a>
         <div class="uk-modal-header">
-          <h2>{{'BASIC_INFO' | translate}}</h2><hr class="uk-article-divider">
+          <h2 class="uk-clearfix">
+            <font class="uk-float-left">{{'BASIC_INFO' | translate}}</font>
+            <font class="uk-float-right">
+              <small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{schemaDlgGetStep("step2")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{schemaDlgGetTotalStep()}}{{'STEPS' | translate}}</small>
+            </font>
+          </h2>
+          <hr class="uk-article-divider">
+        </div>
+        <div class="uk-container ocmodal-body">
+          <div class="uk-form-row uk-margin-top">
+            <label class="uk-form-label">{{'SCHEMA_NAME' | translate}} *</label>
+            <div class="uk-form-controls">
+              <input type="input" class="uk-width-1-1" ng-model="newschema.name">
+            </div>
+          </div>
+          <div class="uk-form-row uk-margin-top">
+            <label class="uk-form-label">{{'WITH_HBASE' | translate}}?</label>
+            <div class="uk-form-controls uk-grid uk-grid-collapse">
+              <div class="uk-width-1-2">
+              <input ng-disabled="editflag&&newschema.disableWithHbase()" type="radio" class="uk-margin-small-right" name="withhbaseradio" ng-model="newschema.with_hbase" ng-value="true" ng-change="withHbaseChanged()"><label class="radio">{{'YES' | translate}}<i style="color: darkkhaki;" ng-if="newschema.with_hbase">&nbsp;&nbsp;!{{'WITH_HBASE_YES' | translate}}</i></label>
+              </div>
+              <div class="uk-width-1-2">
+              <input ng-disabled="editflag&&newschema.disableWithHbase()" type="radio" class="uk-margin-small-right" name="withhbaseradio" ng-model="newschema.with_hbase" ng-value="false" ng-change="withHbaseChanged()"><label class="radio">{{'NO' | translate}}</label>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="uk-modal-footer">
           <hr class="uk-article-divider">
-          <div class="clearfix">
+          <div class="uk-clearfix">
             <div class="uk-float-left">
               <b style="color: red;">{{newschema.checkBasicInfo(existed_schema_inmodal).message | translate}}</b>
             </div>
             <div class="uk-float-right">
-              <button ng-if="!editflag" class="btn btn-primary" uib-popover="{{'PREV_WARN' | translate}}" popover-trigger="'mouseenter'" popover-append-to-body="true" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
-              <button class="btn btn-primary" type="button" ng-click="next()" ng-disabled="!newschema.checkBasicInfo(existed_schema_inmodal).result">{{'NEXT' | translate}}</button>
-              <button class="btn btn-warning" type="button" ng-click="cancel()">{{'CANCEL' | translate}}</button>
+              <button type="button" ng-if="!editflag" class="uk-button uk-button-primary" data-uk-tooltip title="{{'PREV_WARN' | translate}}" ng-click="schemaDlgPrev()">{{'PREV' | translate}}</button>
+              <button type="button" class="uk-button uk-button-primary" ng-click="schemaDlgNext()" ng-disabled="!newschema.checkBasicInfo(existed_schema_inmodal).result">{{'NEXT' | translate}}</button>
+              <button type="button" class="uk-button uk-modal-close">{{'CANCEL' | translate}}</button>
             </div>
           </div>
         </div>
