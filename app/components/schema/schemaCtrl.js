@@ -473,17 +473,20 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   }; // END of template function
 
   /**
-   * Schema operations
-   * $scope.addSchema:      Add new schema using modal dialog.
-   * $scope.editSchema:     Edit (delete and create a new one) current schema using modal dialog.
-   * $scope.selectSchema:   Config current schema that displayed($scope.page.schema).
-   * $scope.checkDisplay:   Action function of checkbox on the top of 'Show in results'.
-   * $scope.changeDisplay:  Action function of checkbox bind to each fields.
-   * $scope.deleteSchema:   Delete current schema.
+   * Functions of basic dialog
    */
   $scope.schemaDlg_init = function() {
     $scope.addsteps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
     $scope.curstep = 0;
+    $scope.field_type = CField.STORE_TYPES;
+    $scope.field_index_type = CField.INDEX_TYPES;
+    $scope.typeFilter = CField.typeFilter;
+    $scope.queryFilter = CField.queryFilter;
+
+    $scope.new_content_field = { name: null, type: null };
+    $scope.new_inner_field = { name: null, separator: null };
+    $scope.new_field = new CField({ name: '', store_type: '' });
+    $scope.new_query_field = { name: null, weight: 1 };
   };
   $scope.schemaDlg_init();
   $scope.schemaDlgGetStep = function(name) {
@@ -525,6 +528,63 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       $scope.addsteps = newsteps;
     }
   };
+  $scope.checkQueryFields = function() {
+    let flag = false;
+    $scope.newschema.fields.map(f => {
+      if (CField.queryFilter(f)) {
+        flag = true;
+      }
+    });
+    if ($scope.newschema.content_fields.length > 0) {
+      flag = true;
+    }
+    return flag;
+  };
+  $scope.checkContentField = function() {
+    let existed = [];
+    $scope.newschema.content_fields.map(cfd => existed.push(cfd.name));
+    if (!$scope.new_content_field.name || !$scope.new_content_field.type) {
+      return false;
+    } else if (!CField.rule($scope.new_content_field.name)) {
+      return false;
+    } else if (existed.includes($scope.new_content_field.name)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  $scope.addContentField = function(new_content_field) {
+    $scope.newschema.addContentField(new_content_field);
+    if (!$scope.checkQueryFields()) {
+      $scope.schemaDlgRemoveStep('step5');
+    } else {
+      $scope.schemaDlgRecoverStep('step5');
+    }
+  };
+  $scope.removeContentField = function(index) {
+    $scope.newschema.removeContentField(index);
+    if (!$scope.checkQueryFields()) {
+      $scope.schemaDlgRemoveStep('step5');
+    } else {
+      $scope.schemaDlgRecoverStep('step5');
+    }
+  };
+  $scope.checkInnerField = function() {
+    let existed = [];
+    $scope.newschema.inner_fields.map(ifd => existed.push(ifd.name));
+    if (!$scope.new_inner_field.name || !$scope.new_inner_field.separator) {
+      return false;
+    } else if (!CField.rule($scope.new_inner_field.name)) {
+      return false;
+    } else if (existed.includes($scope.new_inner_field.name)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  /**
+   * Functions of add schema
+   */
   $scope.addSchemaDlg_init = function() {
     $scope.editflag = false;
     $scope.newschema = new CSchema({name: ''});

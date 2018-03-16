@@ -8,7 +8,7 @@ angular.module('basic').factory('CField', function() {
     /**
      * Constructor
      */
-    constructor({name, store_type, indexed=false, index_type='', hbase_column='', hbase_family='', content_field='', inner_field='', enable_in_result=false}) {
+    constructor({name, store_type=null, indexed=false, index_type=null, hbase_column='', hbase_family='', content_field=null, inner_field=null, enable_in_result=false}) {
       this.name = name;
       this.store_type = store_type;
       this.indexed = indexed;
@@ -21,13 +21,13 @@ angular.module('basic').factory('CField', function() {
     }
     emptyField() {
       this.name = '';
-      this.store_type = '';
+      this.store_type = null;
       this.indexed = false;
-      this.index_type = '';
+      this.index_type = null;
       this.hbase_column = '';
       this.hbase_family = '';
-      this.content_field = '';
-      this.inner_field = '';
+      this.content_field = null;
+      this.inner_field = null;
       this.enable_in_result = false;
     }
     validate(with_hbase) {
@@ -83,9 +83,9 @@ angular.module('basic').factory('CField', function() {
         content_field: this.content_field,
         inner_field: this.inner_field,
       };
-      if (tmpJsn.index_type === '') { delete tmpJsn.index_type; }
-      if (tmpJsn.content_field === '') { delete tmpJsn.content_field; }
-      if (tmpJsn.inner_field === '') { delete tmpJsn.inner_field; }
+      if (tmpJsn.index_type === '' || tmpJsn.index_type === null) { delete tmpJsn.index_type; }
+      if (tmpJsn.content_field === '' || tmpJsn.content_field === null) { delete tmpJsn.content_field; }
+      if (tmpJsn.inner_field === '' || tmpJsn.inner_field === null) { delete tmpJsn.inner_field; }
       if (tmpJsn.hbase_column === '') { delete tmpJsn.hbase_column; }
       if (tmpJsn.hbase_family === '') { delete tmpJsn.hbase_family; }
       return tmpJsn;
@@ -96,7 +96,7 @@ angular.module('basic').factory('CField', function() {
      */
     clearIndexType() {
       if (!this.store_type || !this.indexed && !this.content_field) {
-        this.index_type = '';
+        this.index_type = null;
       }
     }
   }

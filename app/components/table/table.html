@@ -4,7 +4,8 @@
   <div class="uk-modal-dialog">
     <a class="uk-modal-close uk-close"></a>
     <div class="uk-modal-header">
-      <h2>{{'ADD_NEW_TABLE' | translate}}</h2><hr>
+      <h2>{{'ADD_NEW_TABLE' | translate}}</h2>
+      <hr class="uk-article-divider">
     </div>
     <form class="uk-form uk-form-horizontal">
       <div class="uk-form-row">
@@ -41,7 +42,7 @@
       </div>
     </form>
     <div class="uk-modal-footer">
-      <hr>
+      <hr class="uk-article-divider">
       <div class="uk-clearfix">
         <div class="uk-float-left">
           <b style="color: red;">{{addTableCheck(exsited_tables).message | translate}}</b>
@@ -60,7 +61,8 @@
   <div class="uk-modal-dialog">
     <a class="uk-modal-close uk-close"></a>
     <div class="uk-modal-header">
-      <h2>{{'EDIT_TABLE_FIELDS' | translate}}</h2><hr>
+      <h2>{{'EDIT_TABLE_FIELDS' | translate}}</h2>
+      <hr class="uk-article-divider">
     </div>
     <form class="uk-form uk-form-horizontal">
       <div class="uk-form-row">
@@ -125,41 +127,44 @@
         </div>
       </div>
     </form>
-    <br><hr>
-    <table class="uk-table uk-table-striped uk-table-condensed">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>{{'INTABLE_NAME' | translate}}</th>
-          <th>{{'INTABLE_STORE_TYPE' | translate}}</th>
-          <th>{{'INTABLE_INDEX_TYPE' | translate}}</th>
-          <th>{{'INTABLE_CONTENT_FIELD' | translate}}</th>
-          <th>{{'INTABLE_INNER_FIELD' | translate}}</th>
-          <th>{{'HBASE' | translate}}</th>
-          <th>{{'INTABLE_QUERY_WEIGHT' | translate}}</th>
-          <th>{{'INTABLE_OPERATION' | translate}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="field in curschema.fields">
-          <td>{{$index+1}}</td>
-          <td>{{field.name}}</td>
-          <td>{{field.store_type}}</td>
-          <td>{{field.index_type || ('NULL' | translate)}}</td>
-          <td>{{field.content_field || ('NULL' | translate)}}</td>
-          <td>{{field.inner_field || ('NULL' | translate)}}</td>
-          <td>{{field.hbase_family || ('NULL' | translate)}}:{{field.hbase_column || ('NULL' | translate)}}</td>
-          <td>{{field.queryWeight(curschema.query_fields) || ('NULL' | translate)}}</td>
-          <td ng-if="!field.queryWeight(curschema.query_fields)">
-              <a href="javascript:void(0)" style="color:red" ng-click="curschema.removeField($index)"><i class="fas fa-times"></i></a>
-              <a href="javascript:void(0)" style="color: deepskyblue" ng-click="editField($index)"><i class="fas fa-pencil-alt"></i></a>
-          </td>
-          <td ng-if="field.queryWeight(curschema.query_fields)">{{'UNAVAILABLE' | translate}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <br>
+    <hr class="uk-article-divider">
+    <div class="uk-overflow-container">
+      <table class="uk-table uk-table-striped uk-table-condensed uk-text-nowrap">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{'INTABLE_NAME' | translate}}</th>
+            <th>{{'INTABLE_STORE_TYPE' | translate}}</th>
+            <th>{{'INTABLE_INDEX_TYPE' | translate}}</th>
+            <th>{{'INTABLE_CONTENT_FIELD' | translate}}</th>
+            <th>{{'INTABLE_INNER_FIELD' | translate}}</th>
+            <th>{{'HBASE' | translate}}</th>
+            <th>{{'INTABLE_QUERY_WEIGHT' | translate}}</th>
+            <th>{{'INTABLE_OPERATION' | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="field in curschema.fields">
+            <td>{{$index+1}}</td>
+            <td>{{field.name}}</td>
+            <td>{{field.store_type}}</td>
+            <td>{{field.index_type || ('NULL' | translate)}}</td>
+            <td>{{field.content_field || ('NULL' | translate)}}</td>
+            <td>{{field.inner_field || ('NULL' | translate)}}</td>
+            <td>{{field.hbase_family || ('NULL' | translate)}}:{{field.hbase_column || ('NULL' | translate)}}</td>
+            <td>{{field.queryWeight(curschema.query_fields) || ('NULL' | translate)}}</td>
+            <td ng-show="!field.queryWeight(curschema.query_fields)">
+                <a href="javascript:void(0)" class="uk-margin-small-right" style="color:red" ng-click="curschema.removeField($index)"><i class="fas fa-times"></i></a>
+                <a href="javascript:void(0)" style="color: deepskyblue" ng-click="editField($index)"><i class="fas fa-pencil-alt"></i></a>
+            </td>
+            <td ng-show="field.queryWeight(curschema.query_fields)">{{'UNAVAILABLE' | translate}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="uk-modal-footer">
-      <hr>
+      <hr class="uk-article-divider">
       <div class="uk-clearfix">
         <div class="uk-float-left">
           <b style="color: red;">{{modalmsg | translate}}</b>
@@ -194,12 +199,14 @@
           <button class="uk-button" ng-click="editTable()"><i class="fas fa-edit"></i></button>
         </div>
         <div class="uk-placeholder uk-margin-large-top"></div>
-        <h3 class="uk-panel-title">{{'BASIC_INFO' | translate}}</h3><hr>
+        <h3 class="uk-panel-title">{{'BASIC_INFO' | translate}}</h3>
+        <hr class="uk-article-divider">
         <div class="uk-grid uk-margin-large-bottom">
           <div class="uk-width-1-2"><b class="uk-margin-right">{{'NAME' | translate}}:</b>{{page.table.name}}</div>
           <div class="uk-width-1-2"><b class="uk-margin-right">{{'SCHEMA' | translate}}:</b><i><a ui-sref="schema({linkschema:page.table.schema.name})" class="oclink-item">{{page.table.schema.name}}</a></i></div>
         </div>
-        <h3 class="uk-panel-title">{{'INDEXER' | translate}}</h3><hr>
+        <h3 class="uk-panel-title">{{'INDEXER' | translate}}</h3>
+        <hr class="uk-article-divider">
         <div class="uk-grid uk-margin-large-bottom">
           <div class="uk-width-1-1">
             <div class="uk-clearfix">
@@ -207,7 +214,7 @@
                 <a ng-repeat="d in page.indexer" class="uk-button uk-margin-small-left" ng-click="selectIndexer($index)">{{d.name}}</a>
               </div>
               <div class="uk-float-right">
-                <a href="" ng-click="refreshIndexerStatus()" style="text-decoration: none;" ng-if="page.host.actived">{{'REFRESH' | translate}}</a>
+                <a href="" ng-click="refreshIndexerStatus()" style="text-decoration: none;" ng-show="page.host.actived">{{'REFRESH' | translate}}</a>
               </div>
             </div>
           </div>
@@ -228,7 +235,8 @@
             </table>
           </div>
         </div>
-        <h3 class="uk-panel-title">{{'FIELDS' | translate}}</h3><hr>
+        <h3 class="uk-panel-title">{{'FIELDS' | translate}}</h3>
+        <hr class="uk-article-divider">
         <table class="uk-table uk-table-striped uk-table-condensed">
           <thead>
             <tr>

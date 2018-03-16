@@ -70,7 +70,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
    */
   $scope.addTable_init = function() {
     $scope.newtable = new CTable({name:''});
-    $scope.newtable.schema = new CSchema({name:''});
+    $scope.newtable.schema = new CSchema({name: ''});
   };
   $scope.addTable_init();
   $scope.addTable = function() {
@@ -136,7 +136,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   $scope.typeFilter = CField.typeFilter;
   $scope.editTable_init = function() {
     $scope.request_list = [];
-    $scope.curfield = new CField({ name: '', store_type: '' });
+    $scope.curfield = new CField({name: ''});
   };
   $scope.editTable_init();
   $scope.editTable = function() {
@@ -167,13 +167,10 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
     let tables = [];
     $scope.curschema.fields.map(f => tables.push(f.name));
     if (!CField.rule($scope.curfield.name)) {
-      console.log('name false');
       return false;
     } else if (tables.includes($scope.curfield.name) && flag) {
-      console.log('repeat false');
       return false;
     } else {
-      console.log($scope.curfield.validate());
       return $scope.curfield.validate();
     }
   };
