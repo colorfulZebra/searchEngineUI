@@ -98,9 +98,10 @@
       </div>
       <div class="uk-form-row">
         <label class="uk-form-label">{{'HBASE' | translate}}</label>
-        <div class="uk-form-controls">
-          <input class="uk-margin-right" ng-model="curfield.hbase_family" placeholder="{{'HBASE_FAMILY' | translate}}">
-          <input ng-model="curfield.hbase_column" placeholder="{{'HBASE_COLUMN' | translate}}">
+        <div class="uk-form-controls uk-grid uk-grid-collapse">
+          <input class="uk-width-4-10" ng-model="curfield.hbase_family" placeholder="{{'HBASE_FAMILY' | translate}}">
+          <div class="uk-width-1-10"></div>
+          <input class="uk-width-1-2" ng-model="curfield.hbase_column" placeholder="{{'HBASE_COLUMN' | translate}}">
         </div>
       </div>
       <div class="uk-form-row">
@@ -119,7 +120,7 @@
           </tbody>
         </table>
       </div>
-      <div class="clearfix">
+      <div class="uk-clearfix uk-margin-top uk-margin-bottom">
         <div class="uk-float-right">
           <button class="uk-button uk-button-success" ng-if="!editModeFlag" ng-click="curschema.addField(curfield)" ng-disabled="!checkField()"><i class="fas fa-plus"></i></button>
           <button class="uk-button uk-button-success" ng-if="editModeFlag" ng-click="saveField()" ng-disabled="curschema.fields[curindex].equals(curfield) || !checkField(false)"><i class="fas fa-save"></i></button>
@@ -127,7 +128,6 @@
         </div>
       </div>
     </form>
-    <br>
     <hr class="uk-article-divider">
     <div class="uk-overflow-container">
       <table class="uk-table uk-table-striped uk-table-condensed uk-text-nowrap">

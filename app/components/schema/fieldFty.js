@@ -70,7 +70,7 @@ angular.module('basic').factory('CField', function() {
       return (this.store_type === CField.STORE_TYPES[6] || this.store_type === CField.STORE_TYPES[7]);
     }
     isIndexedType() {
-      return !(this.store_type === CField.STORE_TYPES[5] || this.store_type === CField.STORE_TYPES[6] || this.store_type === CField.STORE_TYPES[7]);
+      return (this.store_type && !(this.store_type === CField.STORE_TYPES[5] || this.store_type === CField.STORE_TYPES[6] || this.store_type === CField.STORE_TYPES[7]));
     }
     storedJson() {
       let tmpJsn = {

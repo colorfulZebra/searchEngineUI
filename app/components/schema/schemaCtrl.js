@@ -485,7 +485,7 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
 
     $scope.new_content_field = { name: null, type: null };
     $scope.new_inner_field = { name: null, separator: null };
-    $scope.new_field = new CField({ name: '', store_type: '' });
+    $scope.new_field = new CField({ name: '' });
     $scope.new_query_field = { name: null, weight: 1 };
   };
   $scope.schemaDlg_init();
@@ -582,11 +582,42 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       return true;
     }
   };
+  $scope.addField = function(new_field) {
+    if (angular.isDefined(new_field.content_field) && new_field.content_field === null) {
+      new_field.content_field = '';
+    }
+    $scope.newschema.addField(new_field);
+    if (!$scope.checkQueryFields()) {
+      $scope.schemaDlgRemoveStep('step5');
+    } else {
+      $scope.schemaDlgRecoverStep('step5');
+    }
+  };
+  $scope.removeField = function(index) {
+    $scope.newschema.removeField(index);
+    if (!$scope.checkQueryFields()) {
+      $scope.schemaDlgRemoveStep('step5');
+    } else {
+      $scope.schemaDlgRecoverStep('step5');
+    }
+  };
+  $scope.checkField = function() {
+    let existed = [];
+    $scope.newschema.fields.map(fd => existed.push(fd.name));
+    if (!CField.rule($scope.new_field.name)) {
+      return false;
+    } else if (existed.includes($scope.new_field.name)) {
+      return false;
+    } else {
+      return $scope.new_field.validate($scope.newschema.with_hbase);
+    }
+  };
   /**
    * Functions of add schema
    */
   $scope.addSchemaDlg_init = function() {
     $scope.editflag = false;
+    $scope.titleStr = $translate.instant('ADD_NEW_SCHEMA');
     $scope.newschema = new CSchema({name: ''});
     $scope.existed_schema_inmodal = angular.copy($scope.existed_schemas);
   };
