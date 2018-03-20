@@ -198,6 +198,7 @@
           </div>
           <hr class="uk-article-divider">
           <table class="uk-table uk-table-striped">
+            <caption>{{'CONTENT_FIELD' | translate}}</caption>
             <thead>
               <tr>
                 <th>#</th>
@@ -224,6 +225,7 @@
               </tr>
             </tbody>
           </table>
+          <br ng-show="newschema.content_fields.length > 0">
           <div class="uk-form-row">
             <label class="uk-form-label">{{'INNER_FIELD' | translate}}</label>
             <div class="uk-form-controls uk-grid">
@@ -239,6 +241,7 @@
             </div>
           </div>
           <table class="uk-table uk-table-striped">
+            <caption>{{'INNER_FIELD' | translate}}</caption>
             <thead>
               <tr>
                 <th>#</th>
@@ -404,10 +407,75 @@
       <div ng-switch-when="step5" class="uk-modal-dialog uk-modal-dialog-large">
         <a class="uk-modal-close uk-close uk-close-alt"></a>
         <div class="uk-modal-header">
+          <h2 class="uk-clearfix">
+            <font class="uk-float-left">{{'QUERY_FIELD' | translate}}</font>
+            <font class="uk-float-right">
+              <small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{schemaDlgGetStep("step5")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{schemaDlgGetTotalStep()}}{{'STEPS' | translate}}</small>
+            </font>
+          </h2>
           <hr class="uk-article-divider">
+        </div>
+        <div class="uk-container ocmodal-body">
+          <div class="uk-form-row uk-margin-top">
+            <label class="uk-form-label">{{'NAME' | translate}}</label>
+            <div class="uk-form-controls">
+              <select class="uk-width-1-1" ng-model="new_query_field.name" ng-change="new_query_field.weight=1">
+                <option value="">&lt;{{'SELECT_QUERY_FIELD' | translate}}&gt;</option>
+                <option ng-repeat="cf in newschema.content_fields" value="{{cf.name}}">{{cf.name}}</option>
+                <option ng-repeat="fd in newschema.fields | filter: queryFilter" value="{{fd.name}}">{{fd.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="uk-form-row">
+            <label class="uk-form-label">{{'WEIGHT' | translate}}</label>
+            <div class="uk-form-controls">
+              <input type="number" ng-blur="limitWeight()" class="uk-width-1-1" ng-model="new_query_field.weight" min="1">
+            </div>
+          </div>
+          <div class="uk-clearfix uk-margin-top uk-margin-bottom">
+            <div class="uk-float-right">
+              <button class="uk-button uk-button-success" ng-click="newschema.addQueryField(new_query_field)" ng-disabled="!validateQueryField()"><i class="fas fa-plus"></i></button>
+            </div>
+          </div>
+          <table class="uk-table uk-table-striped">
+            <caption>{{'QUERY_FIELD' | translate}}</caption>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>{{'INTABLE_NAME' | translate}}</th>
+                <th>{{'INTABLE_WEIGHT' | translate}}</th>
+                <th>{{'INTABLE_OPERATION' | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-show="newschema.query_fields.length===0">
+                <td colspan="4">{{'EMPTY' | translate}}</td>
+              </tr>
+              <tr ng-show="newschema.query_fields.length===0">
+                <td colspan="4"></td>
+              </tr>
+              <tr ng-repeat="qfield in newschema.query_fields">
+                <td>{{$index + 1}}</td>
+                <td>{{qfield.name}}</td>
+                <td>{{qfield.weight}}</td>
+                <td><a href="javascript:void(0)" ng-click="newschema.removeQueryField($index)" style="color: red;"><i class="fas fa-times"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="uk-modal-footer">
           <hr class="uk-article-divider">
+          <div class="uk-clearfix">
+            <div class="uk-float-left">
+              <b style="color: darkkhaki;">{{'MODALMSG_QUERY_FIELD_TIP' | translate}}</b>
+            </div>
+            <div class="uk-float-right">
+              <button type="button" ng-if="editflag" class="uk-button uk-button-primary" ng-click="schemaDlgPrev()">{{'PREV' | translate}}</button>
+              <button type="button" ng-if="!editflag" class="uk-button uk-button-primary" data-uk-tooltip title="{{'PREV_WARN' | translate}}" ng-click="schemaDlgPrev()">{{'PREV' | translate}}</button>
+              <button type="button" class="uk-button uk-button-primary" ng-click="schemaDlgNext()">{{'NEXT' | translate}}</button>
+              <button type="button" class="uk-button uk-modal-close">{{'CANCEL' | translate}}</button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- END of step 5 -->
@@ -415,10 +483,58 @@
       <div ng-switch-when="step6" class="uk-modal-dialog uk-modal-dialog-large">
         <a class="uk-modal-close uk-close uk-close-alt"></a>
         <div class="uk-modal-header">
+          <h2 class="uk-clearfix">
+            <font class="uk-float-left">{{'EXPRESSION' | translate}}</font>
+            <font class="uk-float-right">
+              <small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{schemaDlgGetStep("step6")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{schemaDlgGetTotalStep()}}{{'STEPS' | translate}}</small>
+            </font>
+          </h2>
           <hr class="uk-article-divider">
+        </div>
+        <div class="uk-container ocmodal-body">
+          <div class="uk-form-row uk-margin-top">
+            <label class="uk-form-label">{{'ROWKEY_EXPRESSION' | translate}}</label>
+            <div class="uk-form-controls uk-grid uk-grid-collapse">
+              <input class="uk-width-9-10" ng-model="newschema.rowkey_expression" readonly>
+              <a ng-show="rowkey_inedit" href="javascript:void(0)" class="uk-width-1-10 uk-button uk-button-primary" ng-click="editrowkey()">
+                <i class="fas fa-angle-up"></i>
+              </a>
+              <a ng-show="!rowkey_inedit" href="javascript:void(0)" class="uk-width-1-10 uk-button uk-button-primary" ng-click="editrowkey()">
+                <i class="fas fa-angle-down"></i>
+              </a>
+            </div>
+          </div>
+          <div class="uk-form-row">
+            <label class="uk-form-label"></label>
+            <div class="uk-form-controls uk-grid uk-grid-small">
+              <select class="uk-width-3-10" ng-model="rowkey_curitem.type" ng-options="t | translate for t in expression_types" ng-change="rowkey_curitem.content=null;rowkey_contents.fun=null;rowkey_contents.funarg=null">
+                <option value="">&lt;{{'SELECT_TYPE' | translate}}&gt;</option>
+              </select>
+              <input type="input" class="uk-width-3-5" ng-show="rowkey_curitem.type==='CONSTANT'" ng-model="rowkey_curitem.content">
+              <input type="input" class="uk-width-3-5" ng-show="rowkey_curitem.type==='CUSTOMIZE'" ng-model="rowkey_curitem.content">
+              <select class="uk-width-3-5" ng-show="rowkey_curitem.type==='VARIABLE'" ng-model="rowkey_curitem.content" ng-options="f.name as f.name for f in newschema.fields">
+                <option value="">&lt;{{'SELECT_FIELD' | translate}}&gt;</option>
+              </select>
+              <select class="uk-width-1-5" ng-show="rowkey_curitem.type==='FUNCTION'" ng-model="rowkey_contents.fun" ng-options="f.name as f.name for f in expfuns.functions" ng-change="changeRowkeyFunction()">
+                <option value="">&lt;{{'SELECT_FUNCTION' | translate}}&gt;</option>
+              </select>
+              <div ng-show="rowkey_curitem.type==='FUNCTION' && !rowkey_contents.fun" class="uk-width-2-5"></div>
+              <input type="input" data-uk-tooltip title="rowkeyDescHtml" class="uk-width-2-5" ng-show="rowkey_curitem.type==='FUNCTION' && rowkey_contents.fun" ng-style="rowkey_funarg_style" ng-model="rowkey_contents.funarg" ng-change="changeRowkeyFunArg()" placeholder="{{'FILL_FUNCTION_ARGS' | translate}}">
+              <div class="uk-width-3-5" ng-show="rowkey_curitem.type===null"></div>
+              <button href="javascript:void(0)" class="uk-width-1-10 uk-button uk-button-success" ng-disabled="!rowkey_curitem.content&&!rowkey_contents.fun" ng-click="addRowkeyExpItem()"><i class="fas fa-plus"></i></button>
+            </div>
+          </div>
         </div>
         <div class="uk-modal-footer">
           <hr class="uk-article-divider">
+          <div class="uk-clearfix">
+            <div class="uk-float-right">
+              <button type="button" ng-if="editflag" class="uk-button uk-button-primary" ng-click="schemaDlgPrev()">{{'PREV' | translate}}</button>
+              <button type="button" ng-if="!editflag" class="uk-button uk-button-primary" data-uk-tooltip title="{{'PREV_WARN' | translate}}" ng-click="schemaDlgPrev()">{{'PREV' | translate}}</button>
+              <button type="button" class="uk-button uk-button-success" ng-click="ok()">{{'OK' | translate}}</button>
+              <button type="button" class="uk-button uk-modal-close">{{'CANCEL' | translate}}</button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- END of step 6 -->
@@ -429,172 +545,6 @@
 <!--
 <script type="text/ng-template" id="addSchema.html">
   <form class="form-horizontal">
-  <div ng-switch="addsteps[curstep]">
-    <div ng-switch-when="step4">
-      <div class="modal-header">
-        <h3 class="modal-title">{{'FIELDS' | translate}}<font class="pull-right"><small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{getStep("step4")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{getTotalStep()}}{{'STEPS' | translate}}</small></font></h3>
-      </div>
-      <div class="modal-body ocmodal-body">
-        <div class="container-fluid">
-          <div class="form-group">
-            <label class="control-label col-md-2">{{'FIELD_NAME' | translate}} *</label>
-            <div class="col-md-10">
-              <input type="text" class="form-control" ng-model="new_field.name" uib-popover="{{'MODALMSG_OPTION_FIELD_TIP' | translate}}" popover-trigger="'mouseenter'" popover-append-to-body="true">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-2">{{'STORE_TYPE' | translate}} *</label>
-            <div class="col-md-10">
-              <select class="form-control" ng-model="new_field.store_type" ng-options="ftp for ftp in field_type" ng-change="fieldStoreTypeChanged()">
-                <option value="">&lt;{{'SELECT_FIELD_STORE_TYPE' | translate}}&gt;</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" ng-show="newschema.content_fields.length>0&&(newschema.index_type===2||newschema.index_type===0)">
-            <label class="control-label col-md-2">{{'CONTENT_FIELD' | translate}}</label>
-            <div class="col-md-10">
-              <select class="form-control" ng-model="new_field.content_field" ng-options="cfield.name as cfield.name for cfield in newschema.content_fields" ng-change="new_field.clearIndexType()" ng-disabled="!new_field.isIndexedType()">
-                <option value="">&lt;{{'SELECT_FIELD_CONTENT_FIELD' | translate}}&gt;</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" ng-show="newschema.index_type===0 || newschema.index_type===2">
-            <label class="control-label col-md-2">{{'FIELD_INDEX' | translate}}</label>
-            <div class="col-md-2">
-              <label class="radio"><input type="radio" ng-value="true" ng-model="new_field.indexed" ng-disabled="!new_field.isIndexedType()">{{'YES' | translate}}</label>
-            </div>
-            <div class="col-md-2">
-              <label class="radio"><input type="radio" ng-value="false" ng-model="new_field.indexed" ng-disabled="!new_field.isIndexedType()" ng-change="new_field.clearIndexType()">{{'NO' | translate}}</label>
-            </div>
-            <div class="col-md-6">
-              <select class="form-control" ng-model="new_field.index_type" ng-options="tp for tp in field_index_type | filter: typeFilter[new_field.store_type]" ng-disabled="!((new_field.indexed || new_field.content_field) && new_field.store_type)">
-                <option value="">&lt;{{'SELECT_FIELD_INDEX_TYPE' | translate}}&gt;</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" ng-show="newschema.with_hbase">
-            <label class="control-label col-md-2">{{'HBASE' | translate}}</label>
-            <div class="col-md-5"><input type="text" class="form-control" ng-model="new_field.hbase_family" placeholder="{{'HBASE_FAMILY' | translate}}"></div>
-            <div class="col-md-5"><input type="text" class="form-control" ng-model="new_field.hbase_column" placeholder="{{'HBASE_COLUMN' | translate}}"></div>
-          </div>
-          <div class="form-group" ng-show="newschema.inner_fields.length>0&&!newschema.with_hbase&&!newschema.index_type!==2&&newschema.index_type!==1">
-            <label class="control-label col-md-2">{{'INNER_FIELD' | translate}}</label>
-            <div class="col-md-10">
-              <select class="form-control" ng-model="new_field.inner_field" ng-options="ifield.name as ifield.name for ifield in newschema.inner_fields">
-                <option value="">&lt;{{'SELECT_FIELD_INNER_FIELD' | translate}}&gt;</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-md-2 col-md-offset-10">
-              <a class="btn btn-success center-block" ng-click="addField(new_field)" ng-disabled="!checkField()"><i class="glyphicon glyphicon-plus"></i></a>
-            </div>
-          </div>
-          <div class="col-md-12">{{'ADDED_FIELDS' | translate}}</div>
-          <div class="col-md-12" style="margin-top: 10px;">
-            <table class="table table-fixed-lg">
-              <thead>
-                <tr>
-                  <th class="col-xs-1">#</th>
-                  <th class="col-xs-2">{{'INTABLE_NAME' | translate}}</th>
-                  <th class="col-xs-2">{{'INTABLE_STORE_TYPE' | translate}}</th>
-                  <th class="col-xs-2">{{'INTABLE_INDEX_TYPE' | translate}}</th>
-                  <th class="col-xs-2">{{'INTABLE_CONTENT_FIELD' | translate}}</th>
-                  <th class="col-xs-2" ng-if="newschema.with_hbase">{{'HBASE' | translate}}</th>
-                  <th class="col-xs-2" ng-if="!newschema.with_hbase">{{'INTABLE_INNER_FIELD' | translate}}</th>
-                  <th class="col-xs-1">{{'INTABLE_OPERATION' | translate}}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-if="newschema.fields.length===0">
-                  <td colspan="7" class="col-xs-12">{{'EMPTY' | translate}}</td>
-                </tr>
-                <tr ng-repeat="field in newschema.fields">
-                  <td class="col-xs-1">{{$index + 1}}</td>
-                  <td class="col-xs-2">{{field.name}}</td>
-                  <td class="col-xs-2">{{field.store_type}}</td>
-                  <td class="col-xs-2">{{field.index_type || ('NULL' | translate)}}</td>
-                  <td class="col-xs-2">{{field.content_field || ('NULL' | translate)}}</td>
-                  <td class="col-xs-2" ng-if="newschema.with_hbase">{{field.hbase_family || ('NULL' | translate)}}:{{field.hbase_column || ('NULL' | translate)}}</td>
-                  <td class="col-xs-2" ng-if="!newschema.with_hbase">{{field.inner_field || ('NULL' | translate)}}</td>
-                  <td class="col-xs-1">
-                    <a ng-if="!(editflag && newschema.disableField($index))" href="" ng-click="removeField($index)" style="text-decoration: none;">{{'DELETE' | translate}}</a>
-                    <p ng-if="editflag && newschema.disableField($index)">{{'NOT_EDITABLE' | translate}}</p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <b class="pull-left" style="color: red;">{{newschema.checkFields().message | translate}}</b>
-        <button ng-if="editflag" class="btn btn-primary" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
-        <button ng-if="!editflag" class="btn btn-primary" uib-popover="{{'PREV_WARN' | translate}}" popover-trigger="'mouseenter'" popover-append-to-body="true" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
-        <button class="btn btn-primary" type="button" ng-click="next()" ng-disabled="!newschema.checkFields().result">{{'NEXT' | translate}}</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">{{'CANCEL' | translate}}</button>
-      </div>
-    </div>
-    <div ng-switch-when="step5">
-      <div class="modal-header">
-        <h3 class="modal-title">{{'QUERY_FIELD' | translate}}<font class="pull-right"><small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{getStep("step5")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{getTotalStep()}}{{'STEPS' | translate}}</small></font></h3>
-      </div>
-      <div class="modal-body ocmodal-body">
-        <div class="container-fluid">
-          <div class="form-group">
-            <label class="control-label col-md-2">{{'NAME' | translate}}</label>
-            <div class="col-md-10">
-              <select class="form-control" ng-model="new_query_field.name" ng-change="new_query_field.weight=1">
-                <option value="">&lt;{{'SELECT_QUERY_FIELD' | translate}}&gt;</option>
-                <option ng-repeat="cf in newschema.content_fields" value="{{cf.name}}">{{cf.name}}</option>
-                <option ng-repeat="fd in newschema.fields | filter: queryFilter" value="{{fd.name}}">{{fd.name}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-2">{{'WEIGHT' | translate}}</label>
-            <div class="col-md-10">
-              <input type="number" ng-blur="limitWeight()" class="form-control" ng-model="new_query_field.weight" min="1">
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-md-2 col-md-offset-10">
-              <a class="btn btn-success center-block" ng-click="newschema.addQueryField(new_query_field)" ng-disabled="!validateQueryField()"><i class="glyphicon glyphicon-plus"></i></a>
-            </div>
-          </div>
-          <div class="col-md-10 col-md-offset-2">
-            <table class="table table-fixed-lg">
-              <thead>
-                <tr>
-                  <th class="col-xs-1">#</th>
-                  <th class="col-xs-5">{{'INTABLE_NAME' | translate}}</th>
-                  <th class="col-xs-3">{{'INTABLE_WEIGHT' | translate}}</th>
-                  <th class="col-xs-3">{{'INTABLE_OPERATION' | translate}}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-if="newschema.query_fields.length===0">
-                  <td colsapn="4" class="col-xs-12">{{'EMPTY' | translate}}</td>
-                </tr>
-                <tr ng-repeat="qfield in newschema.query_fields">
-                  <td class="col-xs-1">{{$index + 1}}</td>
-                  <td class="col-xs-5">{{qfield.name}}</td>
-                  <td class="col-xs-3">{{qfield.weight}}</td>
-                  <td class="col-xs-3"><a href="" ng-click="newschema.removeQueryField($index)" style="text-decoration: none;">{{'DELETE' | translate}}</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <b class="pull-left" style="color: darkkhaki;">{{'MODALMSG_QUERY_FIELD_TIP' | translate}}</b>
-        <button ng-if="editflag" class="btn btn-primary" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
-        <button ng-if="!editflag" class="btn btn-primary" uib-popover="{{'PREV_WARN' | translate}}" popover-trigger="'mouseenter'" popover-append-to-body="true" type="button" ng-click="prev()">{{'PREV' | translate}}</button>
-        <button class="btn btn-primary" type="button" ng-click="next()">{{'NEXT' | translate}}</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">{{'CANCEL' | translate}}</button>
-      </div>
-    </div>
     <div ng-switch-when="step6">
       <div class="modal-header">
         <h3 class="modal-title">{{'EXPRESSION' | translate}}<font class="pull-right"><small class="ocmodal-title-small">{{titleStr}}&nbsp;{{'THE' | translate}}{{getStep("step6")}}{{'STEP' | translate}} / {{'TOTAL' | translate}}{{getTotalStep()}}{{'STEPS' | translate}}</small></font></h3>

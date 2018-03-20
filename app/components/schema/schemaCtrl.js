@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOBAL', '$translate', '$rootScope', '$stateParams', 'schemaServe', 'tableServe', 'CField', 'CSchema', 'CUtil', /*'CExpression', 'CExpfunction',*/ function ($scope, $http, $q, GLOBAL, $translate, $rootScope, $stateParams, schemaServe, tableServe, CField, CSchema, CUtil/*, CExpression, CExpfunction*/) {
+angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOBAL', '$translate', '$rootScope', '$stateParams', 'schemaServe', 'tableServe', 'CField', 'CSchema', 'CUtil', 'CExpression', 'CExpfunction', function ($scope, $http, $q, GLOBAL, $translate, $rootScope, $stateParams, schemaServe, tableServe, CField, CSchema, CUtil, CExpression, CExpfunction) {
 
   $rootScope.global.tab = 'schema';
   /**
@@ -487,6 +487,12 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.new_inner_field = { name: null, separator: null };
     $scope.new_field = new CField({ name: '' });
     $scope.new_query_field = { name: null, weight: 1 };
+
+    $scope.expression_types = CExpression.TYPES;
+    $scope.rowkey_inedit = false;
+    $scope.table_inedit = false;
+    $scope.rowkey_curitem = {type: null, content: null};
+    $scope.rowkey_contents = {fun: null, funarg: null};
   };
   $scope.schemaDlg_init();
   $scope.schemaDlgGetStep = function(name) {
@@ -612,11 +618,36 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       return $scope.new_field.validate($scope.newschema.with_hbase);
     }
   };
+  $scope.validateQueryField = function() {
+    let existed = [];
+    $scope.newschema.query_fields.map(qfd => existed.push(qfd.name));
+    if (!$scope.new_query_field.name || !$scope.new_query_field.weight) {
+      return false;
+    } else if (existed.includes($scope.new_query_field.name)) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  $scope.limitWeight = function() {
+    $scope.new_query_field.weight = CUtil.limitNumber($scope.new_query_field.weight,1);
+  };
+  $scope.editrowkey = function() {
+    $scope.rowkey_inedit = !$scope.rowkey_inedit;
+    $scope.rowkey_curitem = {type: null, content: null};
+    $scope.rowkey_contents = {fun: null, funarg: null};
+    if ($scope.rowkey_inedit) {
+      $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
+        $scope.expfuns = new CExpfunction(data.data.expressions);
+      });
+    }
+  };
   /**
    * Functions of add schema
    */
   $scope.addSchemaDlg_init = function() {
     $scope.editflag = false;
+    $scope.schemaDlgRemoveStep('step5');
     $scope.titleStr = $translate.instant('ADD_NEW_SCHEMA');
     $scope.newschema = new CSchema({name: ''});
     $scope.existed_schema_inmodal = angular.copy($scope.existed_schemas);
