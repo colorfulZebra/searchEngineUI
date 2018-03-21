@@ -6,16 +6,14 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   /**
    * Translation infos
    */
-  //let yes_text = $translate.instant('YES');
-  //let no_text = $translate.instant('NO');
-  //let ok_text = $translate.instant('OK');
+  let yes_text = $translate.instant('YES');
+  let no_text = $translate.instant('NO');
+  let ok_text = $translate.instant('OK');
   //let warn_text = $translate.instant('WARNING');
   //let confirmation_text = $translate.instant('CONFIRMATION');
 
   /**
    * Const variables
-   * $scope.index_type:         Index Type of Schema
-   * $scope.id_formatter_type:  ID Formatter Type of Schema
    */
   $scope.index_type = CSchema.INDEX_TYPES;
   $scope.id_formatter_type = CSchema.ID_FORMATTERS;
@@ -29,7 +27,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
    *                      3, Set current page schema.
    * $scope.limitLen:     Cut String if length more than 15.
    * $scope.$on($destory) Event function to save configuration of fields displayed in search result
-   * $scope.modalDlg:     Modal Dialog that help to add or edit Schema. 
    */
 
   $scope.initial = function() {
@@ -489,10 +486,20 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.new_query_field = { name: null, weight: 1 };
 
     $scope.expression_types = CExpression.TYPES;
-    $scope.rowkey_inedit = false;
-    $scope.table_inedit = false;
     $scope.rowkey_curitem = {type: null, content: null};
     $scope.rowkey_contents = {fun: null, funarg: null};
+    $scope.table_curitem = {type: null, content: null};
+    $scope.table_contents = {fun: null, funarg: null};
+    $scope.expfuns = null;
+    $scope.rowkey_expression = new CExpression();
+    $scope.table_expression = new CExpression();
+    $scope.rowkey_funarg_style = {};
+    $scope.table_funarg_style = {};
+    $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
+      $scope.expfuns = new CExpfunction(data.data.expressions);
+      $scope.rowkeyDescHtml = `<b>${$translate.instant('SELECT_FUNCTION')}</b>`;
+      $scope.tableDescHtml = `<b>${$translate.instant('SELECT_FUNCTION')}</b>`;
+    });
   };
   $scope.schemaDlg_init();
   $scope.schemaDlgGetStep = function(name) {
@@ -632,15 +639,57 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   $scope.limitWeight = function() {
     $scope.new_query_field.weight = CUtil.limitNumber($scope.new_query_field.weight,1);
   };
-  $scope.editrowkey = function() {
-    $scope.rowkey_inedit = !$scope.rowkey_inedit;
+  $scope.changeRowkeyFunction = function() {
+    $scope.rowkey_contents.funarg = '';
+    $scope.rowkey_funarg_style = {};
+    $scope.rowkeyDescHtml = $scope.expfuns.descfunction($scope.rowkey_contents.fun, 0);
+  };
+  $scope.changeRowkeyFunArg = function() {
+    $scope.rowkeyDescHtml = $scope.expfuns.descfunction($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg.split(',').length-1);
+    if (!$scope.expfuns.checkarguments($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg)) {
+      $scope.rowkey_funarg_style = {'background-color': 'pink'};
+    } else {
+      $scope.rowkey_funarg_style = {};
+    }
+  };
+  $scope.addRowkeyExpItem = function() {
+    if ($scope.rowkey_curitem.type === 'FUNCTION') {
+      $scope.rowkey_curitem.content = $scope.expfuns.formatfunction($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg);
+    }
+    $scope.rowkey_expression.addItem($scope.rowkey_curitem);
+    $scope.newschema.rowkey_expression = $scope.rowkey_expression.formatstr();
     $scope.rowkey_curitem = {type: null, content: null};
     $scope.rowkey_contents = {fun: null, funarg: null};
-    if ($scope.rowkey_inedit) {
-      $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
-        $scope.expfuns = new CExpfunction(data.data.expressions);
-      });
+  };
+  $scope.deleteRowkeyExpItem = function(idx) {
+    $scope.rowkey_expression.deleteItem(idx);
+    $scope.newschema.rowkey_expression = $scope.rowkey_expression.formatstr();
+  };
+  $scope.changeTableFunction = function() {
+    $scope.table_contents.funarg = '';
+    $scope.table_funarg_style = {};
+    $scope.tableDescHtml = $scope.expfuns.descfunction($scope.table_contents.fun, 0);
+  };
+  $scope.changeTableFunArg = function() {
+    $scope.tableDescHtml = $scope.expfuns.descfunction($scope.table_contents.fun, $scope.table_contents.funarg.split(',').length-1);
+    if (!$scope.expfuns.checkarguments($scope.table_contents.fun, $scope.table_contents.funarg)) {
+      $scope.table_funarg_style = {'background-color': 'pink'};
+    } else {
+      $scope.table_funarg_style = {};
     }
+  };
+  $scope.addTableExpItem = function() {
+    if ($scope.table_curitem.type === 'FUNCTION') {
+      $scope.table_curitem.content = $scope.expfuns.formatfunction($scope.table_contents.fun, $scope.table_contents.funarg);
+    }
+    $scope.table_expression.addItem($scope.table_curitem);
+    $scope.newschema.table_expression = $scope.table_expression.formatstr();
+    $scope.table_curitem = {type: null, content: null};
+    $scope.table_contents = {fun: null, funarg: null};
+  };
+  $scope.deleteTableExpItem = function(idx) {
+    $scope.table_expression.deleteItem(idx);
+    $scope.newschema.table_expression = $scope.table_expression.formatstr();
   };
   /**
    * Functions of add schema
@@ -667,51 +716,12 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       $scope.addSchemaDlg_init();
       schemaDlg.show();
     }
-    /*
-    $scope.modalDlg(
-      $translate.instant('ADD_NEW_SCHEMA'), 
-      $translate.instant('CONFIRM_ADD_SCHEMA'),
-      new CSchema({name:''}),
-      function() {
-        schemaServe.addSchema(this.newschema.storedJson()).then((data) => {
-          if (data.data.result.error_code !== 0) {
-            $ngConfirm({
-              title: $translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR'),
-              content: data.data.result.error_desc,
-              closeIcon: true,
-              buttons: {
-                OK: {
-                  text: ok_text
-                }
-              }
-            });
-            $scope.initial();
-          } else {
-            schemaServe.addSchemaLocal(this.newschema.name, '', $scope.username).then(() => {
-              $scope.initial();
-            });
-          }
-        });
-      }
-    );
-    */
   };
   $scope.editSchema = function() {
     if (!$rootScope.functions.initial()) { return; }
     if (angular.isDefined($scope.page.tables)) {
       if ($scope.page.tables.length > 0) {
-        /*
-        $ngConfirm({
-          title: warn_text, 
-          content: $translate.instant('CONFIRM_EDIT_SCHEMA_ERR'),
-          closeIcon: true,
-          buttons: {
-            OK: {
-              text: ok_text
-            }
-          }
-        });
-        */
+        UIkit.modal.alert($translate.instant('CONFIRM_EDIT_SCHEMA_ERR'), {labels: { 'Ok': ok_text }});
       } else {
         /*
         $scope.modalDlg(
@@ -763,6 +773,7 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.schemas[index].actived = true;
     // Get related tables
     tableServe.getTablesBySchema($scope.page.schema.name).then((data) => {
+      console.log(data);
       $scope.page.tables = [];
       if (angular.isArray(data.data.tables)) {
         if (data.data.tables.length > 0) {
@@ -797,44 +808,24 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   };
   $scope.deleteSchema = function() {
     if (!$rootScope.functions.initial()) { return; }
-    /*
     if (angular.isDefined($scope.page.tables)) {
       if ($scope.page.tables.length > 0) {
-        $ngConfirm({
-          title: warn_text, 
-          content: $translate.instant('CONFIRM_DELETE_SCHEMA_ERR'),
-          closeIcon: true,
-          buttons: {
-            OK: {
-              text: ok_text
-            }
-          }
-        });
+        UIkit.modal.alert($translate.instant('CONFIRM_DELETE_SCHEMA_ERR'), {labels: { 'Ok': ok_text }});
       } else { // There are not any tables belong to the schema
-        $ngConfirm({
-          title: confirmation_text,
-          content: $translate.instant('CONFIRM_DELETE_SCHEMA'),
-          closeIcon: true,
-          scope: $scope,
-          buttons: {
-            Yes: {
-              text: yes_text,
-              action: function() {
-                schemaServe.deleteSchema($scope.page.schema.name).then(() => {
-                  // delete schema info in local db
-                  schemaServe.deleteSchemaLocal($scope.page.schema.name);
-                  $scope.initial();
-                });
-              }
-            },
-            No: {
-              text: no_text
-            }
+        UIkit.modal.confirm($translate.instant('CONFIRM_DELETE_SCHEMA'), function() {
+          schemaServe.deleteSchema($scope.page.schema.name).then(() => {
+            // delete schema info in local db
+            schemaServe.deleteSchemaLocal($scope.page.schema.name);
+            $scope.initial();
+          });
+        }, {
+          labels: {
+            'Ok': yes_text,
+            'Cancel': no_text
           }
         });
       }
     }
-    */
   };
 }])
   .directive('indeterminate', function() {

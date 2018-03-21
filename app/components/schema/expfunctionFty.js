@@ -22,21 +22,21 @@ angular.module('basic').factory('CExpfunction', function() {
       let desc = `Cannot find function ${name}`;
       this.functions.map(func => {
         if (func.name === name) {
-          desc = `<h5>Name</h5><p style="color: grey">${func.name}</p>
-                  <h5>Arguments</h5>`;
+          desc = `<h3 style="color: Gainsboro;">Name</h3><p style="color: LemonChiffon; font-size: 16px;">${func.name}</p>
+                  <h3 style="color: Gainsboro;">Arguments</h3>`;
           if (func.args.length) {
             let argdescs = [];
             for (let i=0; i<func.args.length; i++) {
               let arg = func.args[i];
               if (i === hightlightindex) {
-                argdescs.push(`<li style="color: deepskyblue">${arg.name}( ${arg.type} ): ${arg.description}</li>`);
+                argdescs.push(`<li style="color: DeepSkyBlue">${arg.name}( ${arg.type} ): ${arg.description}</li>`);
               } else {
-                argdescs.push(`<li style="color: grey">${arg.name}( ${arg.type} ): ${arg.description}</li>`);
+                argdescs.push(`<li style="color: Grey">${arg.name}( ${arg.type} ): ${arg.description}</li>`);
               }
             }
-            desc = desc + `<ul>${argdescs.join('')}</ul><h5>Description</h5><p style="color: grey">${func.desc}</p>`;
+            desc = desc + `<ul>${argdescs.join('')}</ul><h3 style="color: Gainsboro;">Description</h3><p style="color: LightGrey; font-size: 14px;">${func.desc}</p>`;
           } else {
-            desc = desc + `<p style="color: grey">NULL</p><h5>Description</h5><p style="color: grey">${func.desc}</p>`;
+            desc = desc + `<p style="color: Grey">NULL</p><h3 style="color: Gainsboro;">Description</h3><p style="color: LightGrey; font-size: 14px;">${func.desc}</p>`;
           }
         }
       });
