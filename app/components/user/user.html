@@ -6,7 +6,7 @@
     <div class="uk-modal-header">
       <h2 ng-if="!editflag">{{'ADD_NEW_USER' | translate}}</h2>
       <h2 ng-if="editflag">{{'UPDATE_USER' | translate}}</h2>
-      <hr>
+      <hr class="uk-article-divider">
     </div>
     <form class="uk-form uk-form-horizontal">
       <div class="uk-form-row">
@@ -29,7 +29,7 @@
       </div>
     </form>
     <div class="uk-modal-footer">
-      <hr>
+      <hr class="uk-article-divider">
       <div class="uk-clearfix">
         <div class="uk-float-left">
           <b style="color: red;">{{dlgmessage | translate}}</b>
@@ -63,19 +63,23 @@
           <button class="uk-button uk-button-danger uk-margin-small-right" ng-disabled="page.user.isAdmin()" ng-click="deleteUser()"><i class="fas fa-trash-alt"></i></button>
           <button class="uk-button" ng-click="editUser()" ng-disabled="page.user.isAdmin()"><i class="fas fa-edit"></i></button>
         </div>
-        <h3 class="uk-panel-title">{{'BASIC_INFO' | translate}}</h3><hr>
+        <div class="uk-placeholder uk-margin-large-top"></div>
+        <h3 class="uk-panel-title">{{'BASIC_INFO' | translate}}</h3>
+        <hr class="uk-article-divider">
         <div class="uk-grid uk-margin-large-bottom">
           <div class="uk-width-1-2">{{'USERNAME' | translate}}: {{page.user.name}}</div>
           <div class="uk-width-1-2">{{'DESCRIPTION' | translate}}: {{page.user.description || ('NULL' | translate)}}</div>
         </div>
-        <h3 class="uk-panel-title">{{'SCHEMA' | translate}}</h3><hr>
+        <h3 class="uk-panel-title">{{'SCHEMA' | translate}}</h3>
+        <hr class="uk-article-divider">
         <div class="uk-width-1-1 uk-margin-large-bottom">
           <ul class="uk-breadcrumb">
             <li ng-if="page.user.schemas.length===0">{{'NULL' | translate}}</li>
             <li ng-repeat="schema in page.user.schemas">{{schema}}</li>
           </ul>
         </div>
-        <h3 class="uk-panel-title">{{'TABLE' | translate}}</h3><hr>
+        <h3 class="uk-panel-title">{{'TABLE' | translate}}</h3>
+        <hr class="uk-article-divider">
         <div class="uk-width-1-1">
           <ul class="uk-breadcrumb">
             <li ng-if="page.user.tables.length===0">{{'NULL' | translate}}</li>

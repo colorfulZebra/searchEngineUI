@@ -262,7 +262,7 @@ angular.module('basic').factory('CSchema', ['CUtil', 'CField', function(CUtil, C
         let inner_used = [];
         this.inner_fields.map(ifd => inner_used.push({name:ifd.name,used:false}));
         this.fields.map(f => {
-          if (f.inner_field.length > 0) {
+          if (f.inner_field && f.inner_field.length > 0) {
             inner_used.map(iused => {
               if (f.inner_field === iused.name) {
                 iused.used = true;

@@ -170,7 +170,7 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   };
   $scope.schemaDlgRemoveStep = function(name) {
     let idx = $scope.addsteps.indexOf(name);
-    if (idx > 0) {
+    if (idx >= 0) {
       $scope.addsteps.splice(idx, 1);
     }
   };
@@ -392,9 +392,10 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
    */
   $scope.editSchema_init = function() {
     $scope.editflag = true;
-    $scope.schemaDlgRecoverStep('step1');
+    $scope.schemaDlgRemoveStep('step1');
     $scope.titleStr = $translate.instant('EDIT_SCHEMA');
     $scope.newschema = angular.copy($scope.page.schema);
+    $scope.existed_schema_inmodal = angular.copy($scope.existed_schemas);
     let idx = $scope.existed_schema_inmodal.indexOf($scope.newschema.name);
     if (idx >= 0) {
       $scope.existed_schema_inmodal.splice(idx, 1);
@@ -429,8 +430,9 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       if ($scope.page.tables.length > 0) {
         UIkit.modal.alert($translate.instant('CONFIRM_EDIT_SCHEMA_ERR'), {labels: { 'Ok': ok_text }});
       } else {
-        $scope.editSchema_init();
+        $scope.schemaDlg_init();
         if (!schemaDlg.isActive()) {
+          $scope.editSchema_init();
           schemaDlg.show();
         }
       }
