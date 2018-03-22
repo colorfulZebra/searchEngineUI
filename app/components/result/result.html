@@ -1,3 +1,4 @@
+<!--
 <div class="nav-collapse collapse navbar-default" style="position: absolute;background-color: #e7e7e7;z-index: 100;width: 100%">
   <div class="container-fluid">
     <div class="col-lg-5 col-lg-offset-1" style="margin-top: 10px;">
@@ -102,3 +103,17 @@
     </div>
   </div>
 </div>
+-->
+
+<nav class="uk-navbar uk-width-1-1 ocsearch-header">
+  <div class="uk-width-9-10 uk-container-center">
+    <a class="uk-navbar-brand uk-margin-right" ui-sref="search"><img src="images/ocsearch.png" style="height: 30px;" alt="searchengine" title="searchengine"></a>
+    <form class="uk-search uk-margin-small-top" data-uk-search="{flipDropdown:true}">
+      <input class="uk-search-field" type="search" placeholder="{{'SEARCH' | translate}}">
+      <button class="uk-button uk-button-primary">{{'SEARCH' | translate}}</button>
+    </form>
+    <div class="uk-navbar-flip uk-margin-top">
+      <a href="javascript:void(0)" class="uk-link-muted ocsearch-header-link">{{'ADVANCE_SEARCH' | translate}}</a>
+    </div>
+  </div>
+</nav>

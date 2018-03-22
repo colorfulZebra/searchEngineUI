@@ -1,16 +1,16 @@
 <div ng-controller="HeaderCtrl">
   <!-- Navigator bar -->
-  <nav class="uk-navbar uk-width-1-1 uk-grid uk-grid-collapse">
-    <div class="uk-width-8-10 uk-container-center">
+  <nav class="uk-navbar uk-width-1-1 uk-grid uk-grid-collapse ocsearch-header">
+    <div class="uk-width-9-10 uk-container-center">
       <a class="uk-navbar-brand" ui-sref="search"><img src="images/ocsearch.png" style="height: 30px;" alt="searchengine" title="searchengine"></a>
       <div class="uk-navbar-flip">
         <ul class="uk-navbar-nav">
-          <li ng-if="functions.isLogin()" class="uk-parent" data-uk-dropdown>
-            <a href="javascript:void(0)">
+          <li ng-if="functions.isLogin()" class="uk-parent ocsearch-header-parent" data-uk-dropdown>
+            <a href="javascript:void(0)" class="ocsearch-header-item">
               <i class="fas fa-cogs"></i>
               <span>{{functions.getUsername()}}</span>
             </a>
-            <div class="uk-dropdown uk-dropdown-navbar">
+            <div class="uk-dropdown uk-dropdown-navbar ocsearch-header-dropdown">
               <ul class="uk-nav uk-nav-navbar">
                 <li>
                   <a href="javascript:void(0)" class="uk-dropdown-close" ng-click="changepwd()">
@@ -28,37 +28,37 @@
             </div>
           </li>
           <li ng-if="!functions.isLogin()">
-            <a href="javascript:void(0)" ng-click="login()">
+            <a href="javascript:void(0)" class="ocsearch-header-item" ng-click="login()">
               <i class="fas fa-sign-in-alt"></i>
               <span>{{'LOGIN' | translate}}</span>
             </a>
           </li>
-          <li ng-class="{'uk-active': global.tab === 'monitor'}" ng-if="functions.isLogin()&&functions.isAdmin()">
-            <a ui-sref="monitor" ng-click="functions.click('monitor')">
+          <li ng-class="{'uk-active ocsearch-header-item-actived': global.tab === 'monitor'}" ng-if="functions.isLogin()&&functions.isAdmin()">
+            <a class="ocsearch-header-item" ui-sref="monitor" ng-click="functions.click('monitor')">
               <i class="fas fa-desktop"></i>
               <span>{{'MONITOR' | translate}}</span>
             </a>
           </li>
-          <li ng-class="{'uk-active': global.tab === 'user'}" ng-if="functions.isLogin()&&functions.isAdmin()">
-            <a ui-sref="user" ng-click="functions.click('user')">
+          <li ng-class="{'uk-active ocsearch-header-item-actived': global.tab === 'user'}" ng-if="functions.isLogin()&&functions.isAdmin()">
+            <a class="ocsearch-header-item" ui-sref="user" ng-click="functions.click('user')">
               <i class="fas fa-user"></i>
               <span>{{'USER' | translate}}</span>
             </a>
           </li>
-          <li ng-class="{'uk-active': global.tab === 'schema'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
-            <a ui-sref="schema" ng-click="functions.click('schema')">
+          <li ng-class="{'uk-active ocsearch-header-item-actived': global.tab === 'schema'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
+            <a class="ocsearch-header-item" ui-sref="schema" ng-click="functions.click('schema')">
               <i class="fas fa-book"></i>
               <span>{{'SCHEMA' | translate}}</span>
             </a>
           </li>
-          <li ng-class="{'uk-active': global.tab === 'table'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
-            <a ui-sref="table" ng-click="functions.click('table')">
+          <li ng-class="{'uk-active ocsearch-header-item-actived': global.tab === 'table'}" ng-if="functions.isLogin()&&!functions.isAdmin()">
+            <a class="ocsearch-header-item" ui-sref="table" ng-click="functions.click('table')">
               <i class="fas fa-table"></i>
               <span>{{'TABLE' | translate}}</span>
             </a>
           </li>
-          <li ng-class="{'uk-active': global.tab === 'search'}">
-            <a ui-sref="search" ng-click="functions.click('search')">
+          <li ng-class="{'uk-active ocsearch-header-item-actived': global.tab === 'search'}">
+            <a class="ocsearch-header-item" ui-sref="search" ng-click="functions.click('search')">
               <i class="fas fa-search search-icon"></i>
               <span>{{'SEARCH' | translate}}</span>
             </a>
