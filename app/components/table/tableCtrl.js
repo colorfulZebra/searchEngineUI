@@ -9,13 +9,15 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   let yes_text = $translate.instant('YES');
   let no_text = $translate.instant('NO');
   let ok_text = $translate.instant('OK');
-  //let confirmation_text = $translate.instant('CONFIRMATION');
   let create_table_text = $translate.instant('CONFIRM_ADD_TABLE');
   let edit_table_text = $translate.instant('CONFIRM_EDIT_TABLE');
   let delete_table_text = $translate.instant('CONFIRM_DELETE_TABLE');
   let create_table_err = $translate.instant('CONFIRM_TITLE_CREATE_TABLE_ERROR');
   let edit_table_err = $translate.instant('CONFIRM_TITLE_EDIT_TABLE_ERROR');
 
+  /**
+   * UIkit objects
+   */
   let addTableDlg = UIkit.modal('#addTableDlg', {bgclose: false});
   let indexerToggle = UIkit.toggle('#indexerTable', {target:'#indexerTable', animation:'uk-animation-fade', duration: 500});
   let editTableDlg = UIkit.modal('#editTableDlg', {bgclose: false});
@@ -28,6 +30,17 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   $scope.username = $rootScope.functions.getUsername();
   $scope.limitLen = function(item) {
     return CUtil.cutString(item, 15);
+  };
+  $scope.indexedInfo = function(value) {
+    if (value) {
+      return 'YES';
+    } else {
+      return 'NO';
+    }
+  };
+  $scope.nullFilter = function(item) {
+    if (!angular.isDefined(item)) { return false; }
+    return item.toString();
   };
   $scope.initial = function() {
     if (!$rootScope.functions.initial()) { return; }
@@ -240,6 +253,9 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
       }
     });
   };
+  /**
+   * Select a table
+   */
   $scope.selectTable = function(index) {
     if (!$rootScope.functions.initial()) { return; }
     if ($scope.tables.length === 0) { return; }
@@ -290,17 +306,6 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
       $scope.page.host.actived = true;
     }
     indexerToggle.toggle();
-  };
-  $scope.indexedInfo = function(value) {
-    if (value) {
-      return 'YES';
-    } else {
-      return 'NO';
-    }
-  };
-  $scope.nullFilter = function(item) {
-    if (!angular.isDefined(item)) { return false; }
-    return item.toString();
   };
 }])
   .filter('definedfilter', function() {

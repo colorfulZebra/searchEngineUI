@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('basic').service('tableServe', ['$http', '$q', 'GLOBAL', function(http, q, GLOBAL) {
+angular.module('basic').service('tableServe', ['$http', '$q', '$rootScope', 'GLOBAL', function(http, q, $rootScope, GLOBAL) {
   return {
     // Get table list from proxy server
     getTableList: () => {
@@ -13,22 +13,14 @@ angular.module('basic').service('tableServe', ['$http', '$q', 'GLOBAL', function
       return tables.promise;
     },
 
-    /*
-     * Don't need any more
-    getUserTableList: (user_name) => {
-      let tables = q.defer();
-      http.get(`/api/table/get/${user_name}`).then((data) => {
-        tables.resolve(data);
-      }, (err) => {
-        tables.reject(err);
-      });
-      return tables.promise;
-    },
-    */
-
+    // Get tables of schema
     getTablesBySchema: (schema_name) => {
       let tables = q.defer();
-      let schema_selected = { schema:schema_name };
+      let user = $rootScope.functions.getUsername();
+      if (!user) {
+        tables.reject('Unauthorized user');
+      }
+      let schema_selected = { schema:schema_name, user };
       http.post(`${GLOBAL.host}/table/list`, schema_selected).then((data) => {
         tables.resolve(data);
       }, (err) => {
@@ -83,50 +75,6 @@ angular.module('basic').service('tableServe', ['$http', '$q', 'GLOBAL', function
       });
       return indexer.promise;
     },
-
-    /*
-     * Don't need any more
-    // Services of local mysql
-    getTableLocal: () => {
-      let table = q.defer();
-      http.get('/api/table/list').then((data) => {
-        table.resolve(data);
-      }, (err) => {
-        table.reject(err);
-      });
-      return table.promise;
-    },
-
-    getTableLocalByUser: (owner) => {
-      let table = q.defer();
-      http.get(`/api/table/get/${owner}`).then((data) => {
-        table.resolve(data);
-      }, (err) => {
-        table.reject(err);
-      });
-      return table.promise;
-    },
-
-    addTableLocal: (tablename, owner) => {
-      let table = q.defer();
-      http.post('/api/table/add', {name:tablename, owner:owner}).then((data) => {
-        table.resolve(data);
-      }, (err) => {
-        table.reject(err);
-      });
-      return table.promise;
-    },
-
-    deleteTableLocal: (tablename) => {
-      let table = q.defer();
-      http.delete(`/api/table/delete/${tablename}`).then((data) => {
-        table.resolve(data);
-      }, (err) => {
-        table.reject(err);
-      });
-      return table.promise;
-    }
-    */
 
   };
 }]);

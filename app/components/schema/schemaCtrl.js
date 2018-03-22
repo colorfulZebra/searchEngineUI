@@ -93,382 +93,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       $q.all(update_lst);
     }
   });
-  $scope.modalDlg = function(/*title, confirm_content, initval, okfunc*/) {
-    /*
-    let modalInstance = $uibModal.open({
-      animation: true,
-      templateUrl: 'addSchema.html',
-      backdrop: 'static',
-      keyboard: false,
-      scope: $scope,
-      size: 'lg',
-      controller: ['$scope', '$http', '$ngConfirm', '$sce', function($scope, $http, $ngConfirm, $sce) {
-        /**
-         * Initial parameters of Modal Dialog
-         * $scope.helpExpressionHtml:   Help build expression tip infos.
-         * $scope.titleStr:             Title of Modal Dialog.
-         * $scope.newschema:            schema object in Modal Dialog.
-         * $scope.field_type:           const variable contains all store type of field.
-         * $scope.field_index_type:     const variable contains all index type of field.
-         * $scope.typeFilter:           functions that filter index type by store type of field.
-         * $scope.queryFilter:          function that filter fields can be set to query field.
-         * $scope.new_content_field:    temporary content field
-         * $scope.new_inner_field:      temporary inner field
-         * $scope.new_field:            temporary field
-         * $scope.new_query_field:      temporary query field
-         * $scope.addsteps:             total steps to add a schema
-         * $scope.curstep:              current step when adding a schema
-        $scope.helpExpressionHtml = $sce.trustAsHtml(
-          `<h5>${$translate.instant('HELP_EXPRESSION_TITLE')}</h5>
-          ${$translate.instant('HELP_EXPRESSION_CONTENT')}<a target="_blank" href="expression.html">${$translate.instant('HELP_EXPRESSION_LINK')}</a>?`);
-        $scope.rowkeyDescHtml = $sce.trustAsHtml(`<b>${$translate.instant('SELECT_FUNCTION')}</b>`);
-        $scope.tableDescHtml = $sce.trustAsHtml(`<b>${$translate.instant('SELECT_FUNCTION')}</b>`);
-        $scope.titleStr = title;
-        $scope.newschema = initval;
-        $scope.field_type = CField.STORE_TYPES;
-        $scope.field_index_type = CField.INDEX_TYPES;
-        $scope.typeFilter = CField.typeFilter;
-        $scope.queryFilter = CField.queryFilter;
-        $scope.new_content_field = { name: null, type: null };
-        $scope.new_inner_field = { name: null, separator: null };
-        $scope.new_field = new CField({ name: '', store_type: '' });
-        $scope.new_query_field = { name: null, weight: 1 };
-        $scope.addsteps = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'];
-        $scope.curstep = 0;
-        $scope.rowkey_inedit = false;
-        $scope.table_inedit = false;
-        $scope.expression_types = CExpression.TYPES;
-        $scope.expfuns = null;
-        $scope.rowkey_expression = new CExpression();
-        $scope.table_expression = new CExpression();
-        $scope.rowkey_funarg_style = {};
-        $scope.table_funarg_style = {};
-        $scope.editflag = ($scope.newschema.name === '') ? false : true;
-        $scope.existed_schema_inmodal = angular.copy($scope.existed_schemas);
-        if ($scope.editflag) {  // Edit schema remove step1
-          let idx = $scope.existed_schema_inmodal.indexOf($scope.newschema.name);
-          if (idx >= 0) {
-            $scope.existed_schema_inmodal.splice(idx, 1);
-          }
-          $scope.addsteps.splice(0, 1); 
-          if ($scope.newschema.index_type === 1 || ($scope.newschema.with_hbase && $scope.newschema.index_type === -1)) {
-            let idx = $scope.addsteps.indexOf('step3');
-            if (idx >= 0) {
-              $scope.addsteps.splice(idx, 1);
-            }
-          }
-          let flag = false;
-          $scope.newschema.fields.map(f => {
-            if (CField.queryFilter(f)) {
-              flag = true;
-            }
-          });
-          if ($scope.newschema.content_fields.length > 0) {
-            flag = true;
-          }
-          if (!flag) {
-            let idx = $scope.addsteps.indexOf('step5');
-            if (idx >= 0) {
-              $scope.addsteps.splice(idx, 1);
-            }
-          }
-          $scope.rowkey_expression.parsestr($scope.newschema.rowkey_expression, $scope.newschema.fields);
-          $scope.table_expression.parsestr($scope.newschema.table_expression, $scope.newschema.fields);
-        } else { // New schema remove step5
-          $scope.addsteps.splice(4, 1);
-        }
-
-        /**
-         * $scope.limitWeight:  Add lower bound to weight of new query field
-        $scope.limitWeight = function() {
-          $scope.new_query_field.weight = CUtil.limitNumber($scope.new_query_field.weight,1);
-        };
-        /**
-         * Step control functions
-         * $scope.next:     Skip to next page
-         * $scope.prev:     Back to previous page
-         * $scope._ok:      ok function at the end of dialog
-         * $scope.ok:       confirmation dialog at the end of dialog
-         * $scope.cancel:   close dialog
-        $scope.withHbaseChanged = function() {
-          if ($scope.newschema.with_hbase && $scope.newschema.index_type === -1) {
-            $scope.removestep('step3');
-          } else if ($scope.newschema.index_type !== 1) {
-            $scope.recoverstep('step3');
-          }
-        };
-        $scope.chooseType = function(type) {
-          $scope.newschema.index_type = type;
-          if (type === 1) {
-            $scope.removestep('step3');
-          } else {
-            $scope.recoverstep('step3');
-          }
-        };
-        $scope.checkQueryFields = function() {
-          let flag = false;
-          $scope.newschema.fields.map(f => {
-            if (CField.queryFilter(f)) {
-              flag = true;
-            }
-          });
-          if ($scope.newschema.content_fields.length > 0) {
-            flag = true;
-          }
-          return flag;
-        };
-        $scope.addField = function(new_field) {
-          if (angular.isDefined(new_field.content_field) && new_field.content_field === null) {
-            new_field.content_field = '';
-          }
-          $scope.newschema.addField(new_field);
-          if (!$scope.checkQueryFields()) {
-            $scope.removestep('step5');
-          } else {
-            $scope.recoverstep('step5');
-          }
-        };
-        $scope.fieldStoreTypeChanged = function() {
-          $scope.new_field.indexed = false;
-          $scope.new_field.content_field = '';
-          $scope.new_field.index_type = '';
-        };
-        $scope.addContentField = function(new_content_field) {
-          $scope.newschema.addContentField(new_content_field);
-          if (!$scope.checkQueryFields()) {
-            $scope.removestep('step5');
-          } else {
-            $scope.recoverstep('step5');
-          }
-        };
-        $scope.checkContentField = function() {
-          let existed = [];
-          $scope.newschema.content_fields.map(cfd => existed.push(cfd.name));
-          if (!$scope.new_content_field.name || !$scope.new_content_field.type) {
-            return false;
-          } else if (!CField.rule($scope.new_content_field.name)) {
-            return false;
-          } else if (existed.includes($scope.new_content_field.name)) {
-            return false;
-          } else {
-            return true;
-          }
-        };
-        $scope.checkInnerField = function() {
-          let existed = [];
-          $scope.newschema.inner_fields.map(ifd => existed.push(ifd.name));
-          if (!$scope.new_inner_field.name || !$scope.new_inner_field.separator) {
-            return false;
-          } else if (!CField.rule($scope.new_inner_field.name)) {
-            return false;
-          } else if (existed.includes($scope.new_inner_field.name)) {
-            return false;
-          } else {
-            return true;
-          }
-        };
-        $scope.checkField = function() {
-          let existed = [];
-          $scope.newschema.fields.map(fd => existed.push(fd.name));
-          if (!CField.rule($scope.new_field.name)) {
-            return false;
-          } else if (existed.includes($scope.new_field.name)) {
-            return false;
-          } else {
-            return $scope.new_field.validate($scope.newschema.with_hbase);
-          }
-        };
-        $scope.validateQueryField = function() {
-          let existed = [];
-          $scope.newschema.query_fields.map(qfd => existed.push(qfd.name));
-          if (!$scope.new_query_field.name || !$scope.new_query_field.weight) {
-            return false;
-          } else if (existed.includes($scope.new_query_field.name)) {
-            return false;
-          } else {
-            return true;
-          }
-        };
-        $scope.removeField = function(index) {
-          $scope.newschema.removeField(index);
-          if (!$scope.checkQueryFields()) {
-            $scope.removestep('step5');
-          } else {
-            $scope.recoverstep('step5');
-          }
-        };
-        $scope.removeContentField = function(index) {
-          $scope.newschema.removeContentField(index);
-          if (!$scope.checkQueryFields()) {
-            $scope.removestep('step5');
-          } else {
-            $scope.recoverstep('step5');
-          }
-        };
-        $scope.removestep = function(name) {
-          let idx = $scope.addsteps.indexOf(name);
-          if (idx > 0) {
-            $scope.addsteps.splice(idx, 1);
-          }
-        };
-        $scope.recoverstep = function(name) {
-          let idx = $scope.addsteps.indexOf(name);
-          if (idx < 0) {
-            // Add step
-            let newsteps = [];
-            ['step1', 'step2', 'step3', 'step4', 'step5', 'step6'].map(step => {
-              if ($scope.addsteps.includes(step) || step===name) {
-                newsteps.push(step);
-              }
-            });
-            $scope.addsteps = newsteps;
-          }
-        };
-        $scope.next = function() {
-          $scope.curstep = ($scope.curstep + 1) % $scope.addsteps.length;
-        };
-        $scope.prev = function() {
-          if (!$scope.editflag) {
-            if ($scope.addsteps[$scope.curstep] === 'step2') {
-              $scope.newschema.resetval('name');
-              $scope.newschema.resetval('with_hbase');
-            } else if ($scope.addsteps[$scope.curstep] === 'step3') {
-              $scope.new_content_field = { name: null, type: null };
-              $scope.new_inner_field = { name: null, separator: null };
-              $scope.newschema.resetval('content_fields');
-              $scope.newschema.resetval('inner_fields');
-            } else if ($scope.addsteps[$scope.curstep] === 'step4') {
-              $scope.new_field = new CField({ name: '', store_type: '' });
-              $scope.newschema.resetval('fields');
-            } else if ($scope.addsteps[$scope.curstep] === 'step5') {
-              $scope.new_query_field = { name: null, weight: null };
-              $scope.newschema.resetval('query_fields');
-            } else if ($scope.addsteps[$scope.curstep] === 'step6') {
-              $scope.rowkey_inedit = false;
-              $scope.table_inedit = false;
-              $scope.rowkey_expression = new CExpression();
-              $scope.table_expression = new CExpression();
-              $scope.newschema.resetval('rowkey_expression');
-              $scope.newschema.resetval('table_expression');
-            }
-          }
-          $scope.curstep = ($scope.curstep - 1) % $scope.addsteps.length;
-        };
-        $scope.getStep = function(name) {
-          if ($scope.editflag) {
-            return $scope.addsteps.indexOf(name)+1;
-          } else {
-            return $scope.addsteps.indexOf(name);
-          }
-        };
-        $scope.getTotalStep = function() {
-          if ($scope.editflag) {
-            return $scope.addsteps.length;
-          } else {
-            return $scope.addsteps.length-1;
-          }
-        };
-        $scope.editrowkey = function() {
-          $scope.rowkey_inedit = !$scope.rowkey_inedit;
-          $scope.rowkey_curitem = {type: null, content: null};
-          $scope.rowkey_contents = {fun: null, funarg: null};
-          if ($scope.rowkey_inedit) {
-            $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
-              $scope.expfuns = new CExpfunction(data.data.expressions);
-            });
-          }
-        };
-        $scope.addRowkeyExpItem = function() {
-          if ($scope.rowkey_curitem.type === 'FUNCTION') {
-            $scope.rowkey_curitem.content = $scope.expfuns.formatfunction($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg);
-          }
-          $scope.rowkey_expression.addItem($scope.rowkey_curitem);
-          $scope.newschema.rowkey_expression = $scope.rowkey_expression.formatstr();
-          $scope.rowkey_curitem = {type: null, content: null};
-          $scope.rowkey_contents = {fun: null, funarg: null};
-        };
-        $scope.deleteRowkeyExpItem = function(idx) {
-          $scope.rowkey_expression.deleteItem(idx);
-          $scope.newschema.rowkey_expression = $scope.rowkey_expression.formatstr();
-        };
-        $scope.changeRowkeyFunction = function() {
-          $scope.rowkey_contents.funarg = '';
-          $scope.rowkey_funarg_style = {};
-          $scope.rowkeyDescHtml = $sce.trustAsHtml($scope.expfuns.descfunction($scope.rowkey_contents.fun, 0));
-        };
-        $scope.changeRowkeyFunArg = function() {
-          $scope.rowkeyDescHtml = $sce.trustAsHtml($scope.expfuns.descfunction($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg.split(',').length-1));
-          if (!$scope.expfuns.checkarguments($scope.rowkey_contents.fun, $scope.rowkey_contents.funarg)) {
-            $scope.rowkey_funarg_style = {'background-color': 'pink'};
-          } else {
-            $scope.rowkey_funarg_style = {};
-          }
-        };
-        $scope.edittable = function() {
-          $scope.table_inedit = !$scope.table_inedit;
-          $scope.table_curitem = {type: null, content: null};
-          $scope.table_contents = {fun: null, funarg: null};
-          if ($scope.table_inedit) {
-            $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
-              $scope.expfuns = new CExpfunction(data.data.expressions);
-            });
-          }
-        };
-        $scope.addTableExpItem = function() {
-          if ($scope.table_curitem.type === 'FUNCTION') {
-            $scope.table_curitem.content = $scope.expfuns.formatfunction($scope.table_contents.fun, $scope.table_contents.funarg);
-          }
-          $scope.table_expression.addItem($scope.table_curitem);
-          $scope.newschema.table_expression = $scope.table_expression.formatstr();
-          $scope.table_curitem = {type: null, content: null};
-          $scope.table_contents = {fun: null, funarg: null};
-        };
-        $scope.deleteTableExpItem = function(idx) {
-          $scope.table_expression.deleteItem(idx);
-          $scope.newschema.table_expression = $scope.table_expression.formatstr();
-        };
-        $scope.changeTableFunction = function() {
-          $scope.table_contents.funarg = '';
-          $scope.table_funarg_style = {};
-          $scope.tableDescHtml = $sce.trustAsHtml($scope.expfuns.descfunction($scope.table_contents.fun, 0));
-        };
-        $scope.changeTableFunArg = function() {
-          $scope.tableDescHtml = $sce.trustAsHtml($scope.expfuns.descfunction($scope.table_contents.fun, $scope.table_contents.funarg.split(',').length-1));
-          if (!$scope.expfuns.checkarguments($scope.table_contents.fun, $scope.table_contents.funarg)) {
-            $scope.table_funarg_style = {'background-color': 'pink'};
-          } else {
-            $scope.table_funarg_style = {};
-          }
-        };
-        $scope._ok = okfunc;
-        $scope.ok = function() {
-          $ngConfirm({
-            title: title,
-            content: confirm_content,
-            scope: $scope,
-            closeIcon: true,
-            buttons: {
-              Yes: {
-                text: yes_text,
-                action: function(scope) {
-                  scope._ok();
-                  modalInstance.close();
-                }
-              },
-              No: {
-                text: no_text,
-              }
-            }
-          });
-        };
-        $scope.cancel = function() {
-          modalInstance.close();
-        };
-      }] // END of controller
-    }); // END of modal instance
-    */
-  }; // END of template function
-
   /**
    * Functions of basic dialog
    */
@@ -520,6 +144,28 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.curstep = ($scope.curstep + 1) % $scope.addsteps.length;
   };
   $scope.schemaDlgPrev = function() {
+    if (!$scope.editflag) {
+      if ($scope.addsteps[$scope.curstep] === 'step2') {
+        $scope.newschema.resetval('name');
+        $scope.newschema.resetval('with_hbase');
+      } else if ($scope.addsteps[$scope.curstep] === 'step3') {
+        $scope.new_content_field = { name: null, type: null };
+        $scope.new_inner_field = { name: null, separator: null };
+        $scope.newschema.resetval('content_fields');
+        $scope.newschema.resetval('inner_fields');
+      } else if ($scope.addsteps[$scope.curstep] === 'step4') {
+        $scope.new_field = new CField({ name: '', store_type: null });
+        $scope.newschema.resetval('fields');
+      } else if ($scope.addsteps[$scope.curstep] === 'step5') {
+        $scope.new_query_field = { name: null, weight: null };
+        $scope.newschema.resetval('query_fields');
+      } else if ($scope.addsteps[$scope.curstep] === 'step6') {
+        $scope.rowkey_expression = new CExpression();
+        $scope.table_expression = new CExpression();
+        $scope.newschema.resetval('rowkey_expression');
+        $scope.newschema.resetval('table_expression');
+      }
+    }
     $scope.curstep = ($scope.curstep - 1) % $scope.addsteps.length;
   };
   $scope.schemaDlgRemoveStep = function(name) {
@@ -539,6 +185,13 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
         }
       });
       $scope.addsteps = newsteps;
+    }
+  };
+  $scope.withHbaseChanged = function() {
+    if ($scope.newschema.with_hbase && $scope.newschema.index_type === -1) {
+      $scope.schemaDlgRemoveStep('step3');
+    } else if ($scope.newschema.index_type !== 1) {
+      $scope.schemaDlgRecoverStep('step3');
     }
   };
   $scope.checkQueryFields = function() {
@@ -624,6 +277,11 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     } else {
       return $scope.new_field.validate($scope.newschema.with_hbase);
     }
+  };
+  $scope.fieldStoreTypeChanged = function() {
+    $scope.new_field.indexed = false;
+    $scope.new_field.content_field = null;
+    $scope.new_field.index_type = null;
   };
   $scope.validateQueryField = function() {
     let existed = [];
@@ -717,52 +375,91 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       schemaDlg.show();
     }
   };
+  $scope.addSchema_ok = function() {
+    schemaServe.addSchema(this.newschema.storedJson()).then((data) => {
+      if (data.data.result.error_code !== 0) {
+        UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+        $scope.initial();
+      } else {
+        schemaServe.addSchemaLocal(this.newschema.name, '', $scope.username).then(() => {
+          $scope.initial();
+        });
+      }
+    });
+  };
+  /**
+   * Functions of edit schema
+   */
+  $scope.editSchema_init = function() {
+    $scope.editflag = true;
+    $scope.schemaDlgRecoverStep('step1');
+    $scope.titleStr = $translate.instant('EDIT_SCHEMA');
+    $scope.newschema = angular.copy($scope.page.schema);
+    let idx = $scope.existed_schema_inmodal.indexOf($scope.newschema.name);
+    if (idx >= 0) {
+      $scope.existed_schema_inmodal.splice(idx, 1);
+    }
+    if ($scope.newschema.index_type === 1 || ($scope.newschema.with_hbase && $scope.newschema.index_type === -1)) {
+      let idx = $scope.addsteps.indexOf('step3');
+      if (idx >= 0) {
+        $scope.addsteps.splice(idx, 1);
+      }
+    }
+    let flag = false;
+    $scope.newschema.fields.map(f => {
+      if (CField.queryFilter(f)) {
+        flag = true;
+      }
+    });
+    if ($scope.newschema.content_fields.length > 0) {
+      flag = true;
+    }
+    if (!flag) {
+      let idx = $scope.addsteps.indexOf('step5');
+      if (idx >= 0) {
+        $scope.addsteps.splice(idx, 1);
+      }
+    }
+    $scope.rowkey_expression.parsestr($scope.newschema.rowkey_expression, $scope.newschema.fields);
+    $scope.table_expression.parsestr($scope.newschema.table_expression, $scope.newschema.fields);
+  };
   $scope.editSchema = function() {
     if (!$rootScope.functions.initial()) { return; }
     if (angular.isDefined($scope.page.tables)) {
       if ($scope.page.tables.length > 0) {
         UIkit.modal.alert($translate.instant('CONFIRM_EDIT_SCHEMA_ERR'), {labels: { 'Ok': ok_text }});
       } else {
-        /*
-        $scope.modalDlg(
-          $translate.instant('EDIT_SCHEMA'), 
-          $translate.instant('CONFIRM_EDIT_SCHEMA'),
-          angular.copy($scope.page.schema),
-          function() {
-            let schema_added = this.newschema.storedJson();
-            schemaServe.deleteSchema($scope.page.schema.name).then(() => {
-              schemaServe.addSchema(schema_added).then((data) => {
-                if (data.data.result.error_code !== 0) {
-                  // delete schema succeful but new schema failed
-                  $ngConfirm({
-                    title: $translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR'),
-                    content: data.data.result.error_desc,
-                    closeIcon: true,
-                    buttons: {
-                      OK: {
-                        text: ok_text
-                      }
-                    }
-                  });
-                  schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
-                    $scope.initial();
-                  });
-                } else {
-                  // delete & new schema successful in remote server.
-                  schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
-                    schemaServe.addSchemaLocal(schema_added.name, '', $scope.username).then(() => {
-                      $scope.initial();
-                    });
-                  });
-                }
-              });
-            });
-          }
-        );
-        */
+        $scope.editSchema_init();
+        if (!schemaDlg.isActive()) {
+          schemaDlg.show();
+        }
       }
     }
   };
+  $scope.editSchema_ok = function() {
+    let schema_added = this.newschema.storedJson();
+    schemaServe.deleteSchema($scope.page.schema.name).then(() => {
+      schemaServe.addSchema(schema_added).then((data) => {
+        if (data.data.result.error_code !== 0) {
+          // delete schema succeful but new schema failed
+          UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+          schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
+            $scope.initial();
+          });
+        } else {
+          // delete & new schema successful in remote server.
+          schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
+            schemaServe.addSchemaLocal(schema_added.name, '', $scope.username).then(() => {
+              $scope.initial();
+            });
+          });
+        }
+      });
+    });
+  };
+  /**
+   * Select a schema
+   */
   $scope.selectSchema = function(index) {
     if (!$rootScope.functions.initial()) { return; }
     if ($scope.schemas.length === 0) { return; }
@@ -773,7 +470,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.schemas[index].actived = true;
     // Get related tables
     tableServe.getTablesBySchema($scope.page.schema.name).then((data) => {
-      console.log(data);
       $scope.page.tables = [];
       if (angular.isArray(data.data.tables)) {
         if (data.data.tables.length > 0) {
@@ -806,6 +502,9 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       return 'NO';
     }
   };
+  /**
+   * Delete schema
+   */
   $scope.deleteSchema = function() {
     if (!$rootScope.functions.initial()) { return; }
     if (angular.isDefined($scope.page.tables)) {
