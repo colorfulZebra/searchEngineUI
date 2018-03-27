@@ -10,28 +10,14 @@
  */
 angular
   .module('basic', [
-    //'ngAnimate',
-    //'ngAria',
     'ngCookies',
-    //'ngMessages',
-    //'ngResource',
     'ui.router',
-    //'ngSanitize',
-    //'ngTouch',
     'pascalprecht.translate',
-    //'ngFileUpload',
-    //'isteven-multi-select',
-    //'dndLists',
-    //'ui.bootstrap',
     'ui-notification',
     'angularSpinner',
-    //'ui.select',
-    //'toggle-switch',
     'cfp.hotkeys',
-    //'ui.bootstrap.datetimepicker',
     'angularMoment',
     'chart.js',
-    //'cp.ngConfirm'
   ])
   .config(function ($stateProvider, $urlRouterProvider, $httpProvider, NotificationProvider, $translateProvider) {
     $urlRouterProvider.otherwise('search');

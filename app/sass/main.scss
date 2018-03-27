@@ -81,6 +81,23 @@
   color: #FFFFFF;
 }
 
+.ocsearch-sidebar-nav form label {
+  color: #FFFFFF!important;
+}
+
+.ocsearch-sidebar-nav ul li a {
+  color: #FFFFFF!important;
+  text-decoration: none!important;
+}
+
+.ocsearch-sidebar-nav ul li a:hover {
+  color: #d5d5d5!important;
+}
+
+.ocsearch-sidebar-nav .ocsearch-sidebar-nav-active {
+  color: LightGoldenrodYellow!important;
+}
+
 body{
   padding-bottom: 50px;
 }

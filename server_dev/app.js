@@ -21,7 +21,7 @@ if(env === 'dev') {
 
 app.use(express.static(config[env].dist));
 app.use(favicon(path.join(__dirname, '../', config[env].dist, '/favicon.ico')));
-app.use('/ocsearch-service', proxy({target: 'http://10.1.236.143:58080', changeOrigin: true, 'secure': false, logLevel: 'debug'}));
+app.use('/ocsearch-service', proxy({target: 'http://10.1.236.67:58080', changeOrigin: true, 'secure': false, logLevel: 'debug'}));
 app.use(cookieParser());
 
 //app.use(auth);

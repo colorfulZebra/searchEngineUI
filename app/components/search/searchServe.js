@@ -1,9 +1,10 @@
 'use strict';
 
-angular.module('basic').service('searchServe', ['$http', '$q', 'GLOBAL', function(http, q, GLOBAL) {
+angular.module('basic').service('searchServe', ['$http', '$q', '$rootScope', 'GLOBAL', function(http, q, $rootScope, GLOBAL) {
   return {
     querySearch: (queryContent, queryCondition, start_num, total_num, tables, return_fields) => {
       let dataset = q.defer();
+      let user = $rootScope.functions.getUsername();
       let queryCommand = {
         'query':          queryContent,
         'condition':      queryCondition,
@@ -12,6 +13,7 @@ angular.module('basic').service('searchServe', ['$http', '$q', 'GLOBAL', functio
         'sort':           '',
         'tables':         tables,
         'return_fields':  return_fields,
+        user
       };
       http.post(`${GLOBAL.host}/query/search`, queryCommand).then((data) => {
         dataset.resolve(data);

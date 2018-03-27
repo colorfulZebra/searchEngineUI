@@ -8,9 +8,11 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
   /**
    * Tool functions
    */
+  /*
   $scope.toggleSideBar = function(){
     $scope.$broadcast('openSidebar');
   };
+  */
   $scope.getColor = function(idx) {
     let colors = ['result-odd', 'result-even'];
     return colors[parseInt(idx/4) % 2];
@@ -22,7 +24,7 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
    * Initial parameters
    */
   $scope.showCtrl = [];
-  $scope.showAdvance = false;
+  $scope.advancedSearchFlag = true;
   $scope.content = angular.isDefined($rootScope.functions.getCookie('keyschema')) ? $rootScope.functions.getCookie('keyword') : $stateParams.content;
   $scope.schema = angular.isDefined($rootScope.functions.getCookie('keyschema')) ? $rootScope.functions.getCookie('keyschema') : $stateParams.schema;
   $scope.condition = '';
@@ -151,6 +153,14 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
     $scope.schema = $scope.page.schema.name;
     $scope.initial();
   };
+  $scope.advancedSearch = function() {
+    UIkit.offcanvas.hide();
+    $scope.initial();
+  };
+  $scope.configItemsPerPage = function() {
+    UIkit.offcanvas.hide();
+    $scope.initial();
+  };
   $scope.detail = function(index) {
     if (index < 0) { index = 0; }
     let item = $scope.data.docs[index];
@@ -172,10 +182,23 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
     $state.go('detail', {id: pid, table: ptable});
   };
 
+  /**
+   * Control sidebar options
+   */
+  $scope.chooseAdvancedSearch = function() {
+    $scope.advancedSearchFlag = true;
+  };
+  $scope.chooseAdvancedConfig = function() {
+    $scope.advancedSearchFlag = false;
+  };
+
+  /**
+   * host keys
+   */
   hotkeys.bindTo($scope)
     .add({
       combo: 'enter',
-      allowIn: ['INPUT', 'SELECT', 'TEXTAREA'],
+      allowIn: ['INPUT'],
       callback: $scope.search
     });
 }])

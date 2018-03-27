@@ -104,16 +104,95 @@
   </div>
 </div>
 -->
-
+<!-- Off canvas side bar -->
+<div id="resultSideBar" class="uk-offcanvas">
+  <div class="uk-offcanvas-bar uk-offcanvas-bar-flip">
+    <div class="uk-clearfix uk-margin-top">
+      <div class="uk-float-right">
+        <button class="uk-offcanvas-close uk-close uk-close-alt" type="button" uk-close></button>
+      </div>
+    </div>
+    <div class="uk-width-9-10 uk-container-center uk-margin-large-top ocsearch-sidebar-nav">
+      <ul class="uk-subnav uk-subnav-line uk-margin-bottom-remove">
+        <li><a href="javascript:void(0)" ng-click="chooseAdvancedSearch()" ng-class="{'ocsearch-sidebar-nav-active': advancedSearchFlag}">{{'ADVANCE_SEARCH' | translate}}</a></li>
+        <li><a href="javascript:void(0)" ng-click="chooseAdvancedConfig()" ng-class="{'ocsearch-sidebar-nav-active': !advancedSearchFlag}">{{'CONFIG' | translate}}</a></li>
+      </ul>
+      <hr class="uk-article-divider uk-margin-top-remove">
+      <form class="uk-form uk-form-stacked" ng-show="advancedSearchFlag">
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'KEY' | translate}}</label>
+          <div class="uk-form-controls">
+            <input type="text" class="uk-width-1-1">
+          </div>
+        </div>
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'VALUE' | translate}}</label>
+          <div class="uk-form-controls">
+            <input type="text" class="uk-width-1-1">
+          </div>
+        </div>
+        <div class="uk-form-row">
+          <button class="uk-button uk-button-primary" ng-click="advancedSearch()">{{'ADVANCE_SEARCH' | translate}}</button>
+        </div>
+      </form>
+      <form class="uk-form uk-form-stacked" ng-show="!advancedSearchFlag">
+        <div class="uk-form-row">
+          <label class="uk-form-label">{{'ROWS' | translate}}</label>
+          <div class="uk-form-controls">
+            <select class="uk-width-1-1" ng-model="page.rows" ng-options="o for o in page.rowOptions"></select>
+          </div>
+        </div>
+        <div class="uk-form-row">
+          <button class="uk-button uk-button-primary" ng-click="configItemsPerPage()">{{'OK' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End of side bar -->
+<!-- Result main page -->
 <nav class="uk-navbar uk-width-1-1 ocsearch-header">
   <div class="uk-width-9-10 uk-container-center">
     <a class="uk-navbar-brand uk-margin-right" ui-sref="search"><img src="images/ocsearch.png" style="height: 30px;" alt="searchengine" title="searchengine"></a>
-    <form class="uk-search uk-margin-small-top" data-uk-search="{flipDropdown:true}">
+    <form class="uk-search uk-margin-small-top" data-uk-search>
       <input class="uk-search-field" type="search" placeholder="{{'SEARCH' | translate}}">
       <button class="uk-button uk-button-primary">{{'SEARCH' | translate}}</button>
     </form>
     <div class="uk-navbar-flip uk-margin-top">
-      <a href="javascript:void(0)" class="uk-link-muted ocsearch-header-link">{{'ADVANCE_SEARCH' | translate}}</a>
+      <a href="javascript:void(0)" class="uk-link-muted ocsearch-header-link" data-uk-offcanvas="{target: '#resultSideBar'}">{{'ADVANCE_CONFIG' | translate}}</a>
     </div>
   </div>
 </nav>
+<div class="uk-width-1-1" ng-show="schemas !== null">
+  <div class="uk-width-9-10 uk-container-center">
+    <nav class="uk-navbar uk-width-1-1">
+      <ul class="uk-navbar-nav">
+        <li ng-repeat="schema in schemas" ng-class="{'uk-active': schema.actived}">
+          <a href="javascript:void(0)" ng-click="chooseSchema($index)"><i class="fas fa-book"></i><font class="uk-margin-small-left">{{schema.name}}</font></a>
+        </li>
+      </ul>
+    </nav>
+    <ul class="uk-subnav uk-subnav-line uk-width-1-1">
+      <li ng-repeat="table in page.tables" ng-class="{'uk-active': table.actived}">
+        <a href="javascript:void(0)" ng-click="choose($index)"><i class="fas fa-table"></i><font class="uk-margin-left">{{table.name}}</font></a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="uk-width-1-1 uk-margin-top" ng-repeat="item in data.docs">
+  <div class="uk-width-9-10 uk-container-center uk-grid">
+    <h3 class="uk-width-1-1"><span class="uk-badge uk-margin-small-right">{{$index+1+(page.pagination.current-1)*page.rows}}</span><a href="javascript:void(0)" ng-click="detail($index)" target="_blank">{{item.id}}</a></h3>
+    <span ng-repeat="key in page.fields.show" class="uk-width-1-4">
+      <b class="uk-margin-small-right">{{key.name}}:</b>
+      <span ng-if="!key.isLinkType()" ng-class="getColor($index)">{{limitLen(item[key.name])}}</span>
+      <span ng-if="key.store_type==='FILE'">
+        <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name])}}</a>
+      </span>
+      <span ng-if="key.store_type==='ATTACHMENT'">
+        <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name][0]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name][0])}}</a><font ng-class="getColor(findex)">, More...</font>
+      </span>
+    </span>
+  </div>
+</div>
+ 
+<!-- Result of main page -->

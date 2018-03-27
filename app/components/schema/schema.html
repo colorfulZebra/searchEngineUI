@@ -677,6 +677,9 @@
                 <tr ng-show="page.schema.content_fields.length===0">
                   <td colspan="4">{{'EMPTY' | translate}}</td>
                 </tr>
+                <tr ng-show="page.schema.content_fields.length===0">
+                  <td colspan="4"></td>
+                </tr>
                 <tr ng-repeat="cfield in page.schema.content_fields">
                   <td>{{$index+1}}</td>
                   <td>{{cfield.name}}</td>
@@ -701,6 +704,9 @@
               <tbody>
                 <tr ng-show="page.schema.inner_fields.length===0">
                   <td colspan="4">{{'EMPTY' | translate}}</td>
+                </tr>
+                <tr ng-show="page.schema.inner_fields.length===0">
+                  <td colspan="4"></td>
                 </tr>
                 <tr ng-repeat="ifield in page.schema.inner_fields">
                   <td>{{$index+1}}</td>
