@@ -123,6 +123,7 @@ angular.module('basic').controller('UserCtrl', ['$scope', '$rootScope', '$transl
       }
       userServe.newUser($scope.userLogin.name, $scope.userLogin.password, $scope.userLogin.description).then(() => {
         $scope.initial();
+        UIkit.notify($translate.instant('ADD_NEW_USER_SUCCESS'), {status: 'success', timeout: 3000});
       });
     }, {
       labels: {
@@ -145,6 +146,7 @@ angular.module('basic').controller('UserCtrl', ['$scope', '$rootScope', '$transl
       }
       userServe.updateUser($scope.userLogin.name, $scope.userLogin.password).then(() => {
         $scope.initial();
+        UIkit.notify($translate.instant('UPDATE_USER_SUCCESS'), {status: 'success', timeout: 3000});
       });
     }, {
       labels: {

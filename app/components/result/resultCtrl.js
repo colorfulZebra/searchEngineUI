@@ -8,11 +8,6 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
   /**
    * Tool functions
    */
-  /*
-  $scope.toggleSideBar = function(){
-    $scope.$broadcast('openSidebar');
-  };
-  */
   $scope.getColor = function(idx) {
     let colors = ['result-odd', 'result-even'];
     return colors[parseInt(idx/4) % 2];
@@ -35,12 +30,84 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
       hidden:['id', '_table_'], 
       show:[]
     },
-    rows: 10,
+    rows: 10,      //Rows per page
     rowOptions:[10,20,30,50],
     pagination:{
-      current : 1,
-      maxsize : 10
+      current : 1, //Current page
+      limit: 9,    //How many items in pagination
+      total: 0,    //Total items
+      pages: 0,    //Total pages
+      items: []    //Items displayed in page
     },
+  };
+
+  /**
+   * Pagination functions
+   */
+  $scope.pageInit = function() {
+    let tmppages = Math.floor($scope.page.pagination.total / $scope.page.rows);
+    if (tmppages*$scope.page.rows < $scope.page.pagination.total) {
+      $scope.page.pagination.pages = tmppages + 1;
+    } else {
+      $scope.page.pagination.pages = tmppages;
+    }
+    if ($scope.page.pagination.pages > 100) {
+      $scope.page.pagination.pages = 100;
+    }
+    $scope.page.pagination.items = [];
+    if ($scope.page.pagination.pages <= $scope.page.pagination.limit) {
+      for(let i = 1; i <= $scope.page.pagination.pages; i++) {
+        $scope.page.pagination.items.push(i);
+      }
+    } else {
+      for(let i = 1; i < $scope.page.pagination.limit-1; i++) {
+        $scope.page.pagination.items.push(i);
+      }
+      $scope.page.pagination.items.push('....');
+      $scope.page.pagination.items.push($scope.page.pagination.pages);
+    }
+  };
+  $scope.pageNext = function() {
+    if ($scope.page.pagination.current < $scope.page.pagination.pages) {
+      $scope.page.pagination.current = $scope.page.pagination.current + 1;
+      $scope._choose();
+    }
+  };
+  $scope.pagePrev = function() {
+    if ($scope.page.pagination.current > 0) {
+      $scope.page.pagination.current = $scope.page.pagination.current - 1;
+      $scope._choose();
+    }
+  };
+  $scope.pageChanged = function(index) {
+    $scope.page.pagination.current = $scope.page.pagination.items[index];
+    $scope._choose();
+  };
+  $scope.pageResize = function() {
+    let safelimit = Math.floor($scope.page.pagination.limit/2);
+    $scope.page.pagination.items = [];
+    $scope.page.pagination.items.push(1);
+    if ($scope.page.pagination.pages > $scope.page.pagination.limit) {
+      if ($scope.page.pagination.current <= safelimit) {
+        for(let i = 2; i < $scope.page.pagination.limit-1; i++) {
+          $scope.page.pagination.items.push(i);
+        }
+        $scope.page.pagination.items.push('....');
+        $scope.page.pagination.items.push($scope.page.pagination.pages);
+      } else if ($scope.page.pagination.current > safelimit && $scope.page.pagination.current < $scope.page.pagination.pages-safelimit) {
+        $scope.page.pagination.items.push('...');
+        for (let i = $scope.page.pagination.current-safelimit+2; i <= $scope.page.pagination.current+safelimit-2; i++) {
+          $scope.page.pagination.items.push(i);
+        }
+        $scope.page.pagination.items.push('....');
+        $scope.page.pagination.items.push($scope.page.pagination.pages);
+      } else {
+        $scope.page.pagination.items.push('...');
+        for(let i = $scope.page.pagination.pages-$scope.page.pagination.limit+3; i <= $scope.page.pagination.pages; i++) {
+          $scope.page.pagination.items.push(i);
+        }
+      }
+    }
   };
   /**
    * Search control functions
@@ -51,10 +118,10 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
    * $scope.pageChanged:  when click next page or previous page.
    * $scope.search:       when 'key words' changed and re-enter the search button.
    */
-  $scope.username = $rootScope.functions.getUsername();
   $scope.initial = function() {
     if (!$rootScope.functions.initial()) { return; }
     // Get schema list and initial display status.
+    $scope.username = $rootScope.functions.getUsername();
     $q.all([schemaServe.getSchemaList(), schemaServe.getSchemaLocalByUser($scope.username)]).then((data) => {
       $scope.schemas = [];
       let userschema_lst = [];
@@ -84,11 +151,6 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
         $scope.chooseSchema(0);
       }
     });
-    // Focus on main search input box
-    let focusElem = $window.document.getElementById('mainSearchInput');
-    if (focusElem) {
-      focusElem.focus();
-    }
   };
   $scope.initial();
   $scope._choose = function(){
@@ -106,10 +168,23 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
     $scope.page.fields.hidden.map(fd => fields.push(fd));
     $scope.page.fields.show.map(fd => fields.push(fd.name));
     // call query service
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
     searchServe.querySearch($scope.content, $scope.condition, start_num, $scope.page.rows, tables, fields).then((data) => {
-      $scope.data = data.data.data;
-      if($scope.data) {
-        $scope.page.pagination.total = $scope.data.total;
+      if (data.data.result && data.data.result.error_code !== 0) {
+        UIkit.notify(data.data.result.error_desc, {status: 'danger', timeout: 10000});
+      } else {
+        $scope.data = data.data.data;
+        if($scope.data) {
+          $scope.page.pagination.total = $scope.data.total;
+          if ($scope.page.pagination.current === 1) {
+            $scope.pageInit();
+          } else if ($scope.page.pagination.current > 1) {
+            $scope.pageResize();
+          } else {
+            $scope.page.pagination.current = 1;
+            $scope.pageInit();
+          }
+        }
       }
     });
   };
@@ -137,16 +212,15 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
       $scope.page.schema.fields.map(fd => {
         if (fd.enable_in_result) { $scope.page.fields.show.push(fd); }
       });
+      $scope.page.pagination.current = 1;
       $scope._choose();
     });
-  };
-  $scope.pageChanged = function(){
-    $scope._choose();
   };
   $scope.choose = function(index){
     if (!$rootScope.functions.initial()) { return; }
     $scope.page.tables.map(tmptable => tmptable.actived=false);
     $scope.page.tables[index].actived = true;
+    $scope.page.pagination.current = 1;
     $scope._choose();
   };
   $scope.search = function(){
@@ -159,7 +233,9 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
   };
   $scope.configItemsPerPage = function() {
     UIkit.offcanvas.hide();
-    $scope.initial();
+    $scope.page.pagination.current = 1;
+    $scope._choose();
+    //$scope.initial();
   };
   $scope.detail = function(index) {
     if (index < 0) { index = 0; }

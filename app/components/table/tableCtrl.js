@@ -8,7 +8,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
    */
   let yes_text = $translate.instant('YES');
   let no_text = $translate.instant('NO');
-  let ok_text = $translate.instant('OK');
+  //let ok_text = $translate.instant('OK');
   let create_table_text = $translate.instant('CONFIRM_ADD_TABLE');
   let edit_table_text = $translate.instant('CONFIRM_EDIT_TABLE');
   let delete_table_text = $translate.instant('CONFIRM_DELETE_TABLE');
@@ -130,9 +130,13 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
       }
       tableServe.createTable($scope.newtable.storedJson()).then((data) => {
         if (data.data.result.error_code !== 0) {
-          UIkit.modal.alert(`${create_table_err}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+          //UIkit.modal.alert(`${create_table_err}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+          $scope.initial();
+          UIkit.notify(`${create_table_err}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
+        } else {
+          $scope.initial();
+          UIkit.notify($translate.instant('ADD_NEW_TABLE_SUCCESS'), {status: 'success', timeout: 3000});
         }
-        $scope.initial();
       });
     }, {
       labels: {
@@ -218,7 +222,12 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
         }
       }
       if (err_flag) {
-        UIkit.modal.alert(`${edit_table_err}:\n ${result_lst.join('\n')}`, {labels: { 'Ok': ok_text }});
+        //UIkit.modal.alert(`${edit_table_err}:\n ${result_lst.join('\n')}`, {labels: { 'Ok': ok_text }});
+        $scope.initial();
+        UIkit.notify(`${edit_table_err}:\n ${result_lst.join('\n')}`, {status: 'danger', timeout: 10000});
+      } else {
+        $scope.initial();
+        UIkit.notify($translate.instant('EDIT_TABLE_FIELDS_SUCCESS'), {status: 'success', timeout: 3000});
       }
     }
   };
@@ -228,7 +237,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
         editTableDlg.hide();
         $scope._diffSchema();
         $scope._httpInQueue(0);
-        $scope.initial();
+        //$scope.initial();
       }
     }, {
       labels: {

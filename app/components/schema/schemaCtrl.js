@@ -9,8 +9,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   let yes_text = $translate.instant('YES');
   let no_text = $translate.instant('NO');
   let ok_text = $translate.instant('OK');
-  //let warn_text = $translate.instant('WARNING');
-  //let confirmation_text = $translate.instant('CONFIRMATION');
 
   /**
    * Const variables
@@ -378,11 +376,13 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   $scope.addSchema_ok = function() {
     schemaServe.addSchema(this.newschema.storedJson()).then((data) => {
       if (data.data.result.error_code !== 0) {
-        UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+        //UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
         $scope.initial();
+        UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
       } else {
         schemaServe.addSchemaLocal(this.newschema.name, '', $scope.username).then(() => {
           $scope.initial();
+          UIkit.notify($translate.instant('ADD_NEW_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
         });
       }
     });
@@ -444,15 +444,17 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
       schemaServe.addSchema(schema_added).then((data) => {
         if (data.data.result.error_code !== 0) {
           // delete schema succeful but new schema failed
-          UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
+          //UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
           schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
             $scope.initial();
+            UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
           });
         } else {
           // delete & new schema successful in remote server.
           schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
             schemaServe.addSchemaLocal(schema_added.name, '', $scope.username).then(() => {
               $scope.initial();
+              UIkit.notify($translate.instant('EDIT_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
             });
           });
         }

@@ -186,12 +186,31 @@
       <b class="uk-margin-small-right">{{key.name}}:</b>
       <span ng-if="!key.isLinkType()" ng-class="getColor($index)">{{limitLen(item[key.name])}}</span>
       <span ng-if="key.store_type==='FILE'">
-        <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name])}}</a>
+        <a href="http://10.1.236.67:58080/ocsearch-service/query/fileget?id={{item[key.name]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name])}}</a>
       </span>
       <span ng-if="key.store_type==='ATTACHMENT'">
-        <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name][0]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name][0])}}</a><font ng-class="getColor(findex)">, More...</font>
+        <a href="http://10.1.236.67:58080/ocsearch-service/query/fileget?id={{item[key.name][0]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name][0])}}</a><font ng-class="getColor(findex)">, More...</font>
       </span>
     </span>
+  </div>
+</div>
+<div class="uk-width-1-1 uk-margin-large-top">
+  <div class="uk-width-9-10 uk-container-center">
+    <ul class="uk-pagination">
+      <li ng-class="{'uk-disabled': page.pagination.current===1}">
+        <a href="javascript:void(0)" ng-if="page.pagination.current>1" ng-click="pagePrev()"><i class="uk-icon-angle-double-left"></i> 上一页</a>
+        <span ng-if="page.pagination.current===1"><i class="uk-icon-angle-double-left"></i> {{'PREVPAGE' | translate}}</span>
+      </li>
+      <li ng-repeat="item in page.pagination.items" ng-class="{'uk-active':page.pagination.current===page.pagination.items[$index]}">
+        <span ng-if="page.pagination.items[$index].includes('.')">{{item}}</span>
+        <span ng-if="page.pagination.items[$index]===page.pagination.current">{{item}}</span>
+        <a href="javascript:void(0)" ng-if="!page.pagination.items[$index].includes('.') && page.pagination.items[$index]!==page.pagination.current" ng-click="pageChanged($index)">{{item}}</a>
+      </li>
+      <li ng-class="{'uk-disabled': page.pagination.current===page.pagination.pages}">
+        <a href="javascript:void(0)" ng-if="page.pagination.current<page.pagination.pages" ng-click="pageNext()">下一页 <i class="uk-icon-angle-double-right"></i></a>
+        <span ng-if="page.pagination.current===page.pagination.pages">{{'NEXTPAGE' | translate}} <i class="uk-icon-angle-double-right"></i></span>
+      </li>
+    </ul>
   </div>
 </div>
  
