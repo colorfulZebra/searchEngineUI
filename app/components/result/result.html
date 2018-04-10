@@ -1,109 +1,3 @@
-<!--
-<div class="nav-collapse collapse navbar-default" style="position: absolute;background-color: #e7e7e7;z-index: 100;width: 100%">
-  <div class="container-fluid">
-    <div class="col-lg-5 col-lg-offset-1" style="margin-top: 10px;">
-      <form class="form-horizontal">
-        <div class="form-group">
-          <label class="col-lg-2 control-label">{{'ROWS' | translate}}</label>
-          <div class="col-lg-4">
-            <select class="form-control" ng-model="page.rows" ng-options="o for o in page.rowOptions"></select>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-lg-4 col-lg-offset-2">
-            <button class="btn btn-default" data-toggle="collapse" data-target=".nav-collapse">{{'CANCEL' | translate}}</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<div class="navbar-default" style="border-bottom: solid 1px #e7e7e7;">
-  <div class="container-fluid">
-    <div class="row" style="margin-bottom: 10px;">
-      <div class="col-lg-1" style="margin-top: 15px;">
-        <a href="#/search" class="navbar-brand brand col-centered">
-          <img src="/images/ocsearch.png" style="height: 100%; width: 100%; object-fit: contain;" alt="OCSearch" title="OCSearch">
-        </a>
-      </div>
-      <div class="col-lg-5">
-        <div id="custom-search-input" style="margin-top: 15px;">
-          <div class="input-group">
-            <input id="mainSearchInput" type="text" class="form-control" ng-model="content" ng-model-options="{updateOn: 'default blur'}"/>
-            <span class="input-group-btn">
-              <button class="btn btn-info" type="button" ng-click="search()">
-                <i class="glyphicon glyphicon-search"></i>
-              </button>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-5">
-        <div class="col-md-2" style="margin-top: 25px;">
-          <a href="" ng-click="showAdvance=!showAdvance;condition=''" style="text-decoration: none; color: deepSkyBlue;">{{'ADVANCE_SEARCH' | translate}}</a>
-        </div> 
-        <div ng-show="showAdvance" class="col-md-10" style="margin-top: 20px;">
-          <input id="advanceSearch" ng-model="condition" type="text" class="form-control input-sm" search-focus>
-        </div>
-      </div>
-      <div class="col-lg-1 pull-right">
-        <button class="btn btn-default" type="button" style="margin-top: 15px;padding: 9px 13px 9px 13px;outline: 0"
-                data-toggle="collapse" data-target=".nav-collapse">
-          <i class="glyphicon glyphicon-cog"></i>
-        </button>
-      </div>
-    </div>
-    <div class="row" ng-if="schemas !== null">
-      <div class="col-lg-10 col-lg-offset-1">
-        <ul class="nav nav-tabs">
-          <li role="presentation" ng-repeat="item in schemas" ng-class="{active: item.actived}">
-            <a href="" ng-click="chooseSchema($index)">
-              <i class="glyphicon glyphicon-book"></i>
-              {{item.name}}
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-10 col-lg-offset-1">
-      <div class="container-fluid">
-        <div class="row" style="margin-top: 10px;">
-          <button ng-repeat="table in page.tables" style="margin-right: 5px; outline: 0" class="btn btn-default"
-                  ng-click="choose($index)" ng-class="{active: table.actived}" auto-blur-btn="table.actived">
-            <i class="glyphicon glyphicon-list"></i>
-            {{table.name}}
-          </button>
-        </div>
-        <div class="row" ng-repeat="item in data.docs" style="margin-top: 10px;">
-          <h4><span class="badge badge-secondary">{{$index+1+(page.pagination.current-1)*page.rows}}</span>&nbsp;&nbsp;<a href="" ng-click="detail($index)" target="_blank" style="text-decoration: none;">{{item.id}}</a></h4>
-          <span ng-repeat="key in page.fields.show" class="col-md-3">
-            <b>{{key.name}}:&nbsp;&nbsp;</b>
-            <span ng-if="!key.isLinkType()" ng-class="getColor($index)">{{limitLen(item[key.name])}}</span>
-            <span ng-if="key.store_type==='FILE'">
-              <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name])}}</a>
-            </span>
-            <span ng-if="key.store_type==='ATTACHMENT'">
-              <a href="http://10.1.236.143:58080/ocsearch-service/query/fileget?id={{item[key.name][0]}}" target="_blank" style="text-decoration: none; color: deepSkyBlue;">{{limitLen(item[key.name][0])}}</a><font ng-class="getColor(findex)">, More...</font>
-            </span>
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row" ng-if="data.docs && page.pagination.total > 0">
-    <div class="col-lg-10 col-lg-offset-1">
-      <ul uib-pagination items-per-page="page.rows" ng-change="pageChanged()" max-size="page.pagination.maxsize" total-items="page.pagination.total" ng-model="page.pagination.current" previous-text="&lsaquo;" next-text="&rsaquo;"></ul>
-    </div>
-    <div class="col-lg-10 col-lg-offset-1">
-      <h5 style="margin-bottom: 10px">Total: {{page.pagination.total}} items</h5>
-    </div>
-  </div>
-</div>
--->
 <!-- Off canvas side bar -->
 <div id="resultSideBar" class="uk-offcanvas">
   <div class="uk-offcanvas-bar uk-offcanvas-bar-flip">
@@ -122,13 +16,13 @@
         <div class="uk-form-row">
           <label class="uk-form-label">{{'KEY' | translate}}</label>
           <div class="uk-form-controls">
-            <input type="text" class="uk-width-1-1">
+            <input type="text" class="uk-width-1-1" ng-model="condition_key">
           </div>
         </div>
         <div class="uk-form-row">
           <label class="uk-form-label">{{'VALUE' | translate}}</label>
           <div class="uk-form-controls">
-            <input type="text" class="uk-width-1-1">
+            <input type="text" class="uk-width-1-1" ng-model="condition_val">
           </div>
         </div>
         <div class="uk-form-row">

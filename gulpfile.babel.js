@@ -8,7 +8,6 @@ const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const rimraf = require('rimraf');
 const runSequence = require('run-sequence');
-const imagemin = require('gulp-imagemin');
 const lazy = require('lazypipe');
 const eslint = require('gulp-eslint');
 const nodemon = require('gulp-nodemon');
@@ -123,11 +122,6 @@ gulp.task('client:styles', function() {
 gulp.task('client:images', function() {
   return gulp
     .src(path.images)
-    .pipe(imagemin({
-      optimizationLevel: 5,
-      progressive: true,
-      interlaced: true
-    }))
     .pipe(gulp.dest(path.imagesDest));
 });
 

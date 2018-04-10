@@ -11,16 +11,13 @@ module.exports = {
   prod: {
     dist: 'dist',
     port: 9000,
-    dbhost: 'localhost',
+    dbhost: '10.1.236.64',
     dbuser: 'root',
-    dbpassword: 'Sybase123',
+    dbpassword: '',
     dbname: 'ocsearch',
   },
   env: 'prod',
-  lib: './server/lib/',
   enableAuth: false,
-  shiro_config: 'shiro.ini',
-  jar_pack: 'auth-1.0-SNAPSHOT.jar',
   trans: 'zh',
   zh: {
     databaseError: '请检查数据库配置',

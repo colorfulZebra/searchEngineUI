@@ -24,7 +24,7 @@ angular.module('basic').controller('SearchCtrl', ['$scope', 'hotkeys', '$state',
   $scope.login_ok = function() {
     $scope.readonly_flag = true;
     userServe.login($scope.login_username, $scope.login_password).then(data=> {
-      if (data.data.status) {
+      if (data.data.result && !data.data.result.error_code) {
         $rootScope.functions._login($scope.login_username, data.data.token);
         $scope.readonly_flag = false;
         if (dlg.isActive()) {

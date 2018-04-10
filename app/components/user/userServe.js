@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('basic').service('userServe', ['$http', '$q', function(http, q) {
+angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(http, q, GLOBAL) {
   return {
     login: (name, password) => {
       let user = q.defer();
       let login_info = {username:name, password:password};
-      http.post('/api/user/login', login_info).then((data) => {
+      http.post(`${GLOBAL.host}/login`, login_info).then((data) => {
         user.resolve(data);
       }, (err) => {
         user.reject(err);

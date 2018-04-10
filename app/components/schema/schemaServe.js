@@ -1,11 +1,12 @@
 'use strict';
 
-angular.module('basic').service('schemaServe', ['$http', '$q', 'GLOBAL', function(http, q, GLOBAL) {
+angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GLOBAL', function(http, q, $rootScope, GLOBAL) {
   return {
     // Get schema list from proxy server
     getSchemaList: () => {
       let schemas = q.defer();
-      http.get(`${GLOBAL.host}/schema/list`).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.get(`${GLOBAL.host}/schema/list?token=${token}`).then((data) => {
         schemas.resolve(data);
       }, (err) => {
         schemas.reject(err);
@@ -27,8 +28,9 @@ angular.module('basic').service('schemaServe', ['$http', '$q', 'GLOBAL', functio
     // Get schema by table name
     getSchemaByTable: (table_name) => {
       let schema = q.defer();
+      let token = $rootScope.functions.getToken();
       let table_info = { params: { type: 'table', name: table_name } };
-      http.get(`${GLOBAL.host}/schema/get`, table_info).then((data) => {
+      http.get(`${GLOBAL.host}/schema/get?token=${token}`, table_info).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -39,8 +41,9 @@ angular.module('basic').service('schemaServe', ['$http', '$q', 'GLOBAL', functio
     // Delete schema by name
     deleteSchema: (schema_name) => {
       let schema = q.defer();
+      let token = $rootScope.functions.getToken();
       let schema_deleted = { name:schema_name };
-      http.post(`${GLOBAL.host}/schema/delete`, schema_deleted).then((data) => {
+      http.post(`${GLOBAL.host}/schema/delete?token=${token}`, schema_deleted).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -51,7 +54,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', 'GLOBAL', functio
     // Add schema by json object
     addSchema: (newschema) => {
       let schema = q.defer();
-      http.post(`${GLOBAL.host}/schema/add`, newschema).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.post(`${GLOBAL.host}/schema/add?token=${token}`, newschema).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -62,32 +66,13 @@ angular.module('basic').service('schemaServe', ['$http', '$q', 'GLOBAL', functio
     // Update schema by name
     updateSchema: (update_command) => {
       let schema = q.defer();
-      http.post(`${GLOBAL.host}/schema/update`, update_command).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.post(`${GLOBAL.host}/schema/update?token=${token}`, update_command).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
       });
       return schema.promise;
-    },
-
-    // Set/Get schema enable fields show config from local server
-    getSchemaConfig: () => {
-      let schemacfg = q.defer();
-      http.get('/schema/config').then((data) => {
-        schemacfg.resolve(data);
-      }, (err) => {
-        schemacfg.reject(err);
-      });
-      return schemacfg.promise;
-    },
-    setSchemaConfig: (newconfig) => {
-      let schemacfg = q.defer();
-      http.post('/schema/config/set', newconfig).then((data) => {
-        schemacfg.resolve(data);
-      }, (err) => {
-        schemacfg.reject(err);
-      });
-      return schemacfg;
     },
 
     // Services of local mysql

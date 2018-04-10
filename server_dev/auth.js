@@ -1,10 +1,10 @@
 'use strict';
 
-const jwt = require('jwt-simple');
-const secret_code = 'hahahaha';
-const Sequelize = require('sequelize');
-const sequelize = require('./sequelize');
-const user = require('./model/USER')(sequelize, Sequelize);
+//const jwt = require('jwt-simple');
+//const secret_code = 'hahahaha';
+//const Sequelize = require('sequelize');
+//const sequelize = require('./sequelize');
+//const user = require('./model/USER')(sequelize, Sequelize);
 const config = require('./config');
 const trans = config[config.trans];
 
@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
       console.log(req.cookies);
       console.log('***************');
       */
+      /*
       let username = req.cookies.username;
       let token = req.cookies.token;
       if (!token || !username) {
@@ -36,6 +37,7 @@ module.exports = (req, res, next) => {
           }
         });
       }
+      */
     } else {
       next();
     }

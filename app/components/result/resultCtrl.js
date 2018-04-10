@@ -229,13 +229,20 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
   };
   $scope.advancedSearch = function() {
     UIkit.offcanvas.hide();
-    $scope.initial();
+    if ($scope.condition_key && $scope.condition_val) {
+      $scope.condition = `${$scope.condition_key}:${$scope.condition_val}`;
+    } else if ($scope.condition_key) {
+      $scope.condition = `${$scope.condition_key}:*`;
+    } else {
+      $scope.condition = '';
+    }
+    $scope._choose();
+    //$scope.initial();
   };
   $scope.configItemsPerPage = function() {
     UIkit.offcanvas.hide();
     $scope.page.pagination.current = 1;
     $scope._choose();
-    //$scope.initial();
   };
   $scope.detail = function(index) {
     if (index < 0) { index = 0; }
