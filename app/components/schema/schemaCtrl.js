@@ -71,14 +71,17 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   // When leave the 'Schema' page, save the configuration file that changed!
   $scope.$on('$destroy', function() {
     if (!$rootScope.functions.getUsername()) { return ;}
+    /*
     let schema_display_obj = {};
     if (angular.isArray($scope.schemas)) {
       $scope.schemas.map(sc => schema_display_obj[sc.name]={});
       $scope.schemas.map(sc => {sc.fields.map(fd => {schema_display_obj[sc.name][fd.name]=fd.enable_in_result;});});
       if (schema_display_obj && Object.keys(schema_display_obj).length === $scope.schemas.length) {
+        console.log(schema_display_obj);
         schemaServe.setSchemaConfig(schema_display_obj);
       }
     }
+    */
     let update_lst = [];
     if (angular.isArray($scope.schemas)) {
       $scope.schemas.map(sc => {
@@ -117,7 +120,7 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     $scope.table_expression = new CExpression();
     $scope.rowkey_funarg_style = {};
     $scope.table_funarg_style = {};
-    $http.get(`${GLOBAL.host}/expression/list`).then((data) => {
+    schemaServe.getExpression().then((data) => {
       $scope.expfuns = new CExpfunction(data.data.expressions);
       $scope.rowkeyDescHtml = `<b>${$translate.instant('SELECT_FUNCTION')}</b>`;
       $scope.tableDescHtml = `<b>${$translate.instant('SELECT_FUNCTION')}</b>`;
@@ -376,7 +379,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   $scope.addSchema_ok = function() {
     schemaServe.addSchema(this.newschema.storedJson()).then((data) => {
       if (data.data.result.error_code !== 0) {
-        //UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
         $scope.initial();
         UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
       } else {
@@ -386,6 +388,9 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
         });
       }
     });
+    if (schemaDlg.isActive()) {
+      schemaDlg.hide();
+    }
   };
   /**
    * Functions of edit schema
@@ -460,6 +465,9 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
         }
       });
     });
+    if (schemaDlg.isActive()) {
+      schemaDlg.hide();
+    }
   };
   /**
    * Select a schema

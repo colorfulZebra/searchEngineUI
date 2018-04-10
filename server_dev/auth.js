@@ -1,45 +1,27 @@
 'use strict';
 
-//const jwt = require('jwt-simple');
-//const secret_code = 'hahahaha';
-//const Sequelize = require('sequelize');
-//const sequelize = require('./sequelize');
-//const user = require('./model/USER')(sequelize, Sequelize);
+const request = require('request');
 const config = require('./config');
 const trans = config[config.trans];
 
 module.exports = (req, res, next) => {
-  let url = req.originalUrl;
-  if (!req.cookies) {
-    res.status(500).send(trans.tokenError);
-  } else {
-    if (!url.includes('login')) {
-      /*
-      console.log('***************');
-      console.log(url);
-      console.log(req.cookies);
-      console.log('***************');
-      */
-      /*
-      let username = req.cookies.username;
-      let token = req.cookies.token;
-      if (!token || !username) {
-        res.status(500).send(trans.tokenError);
+  if (req.query && req.query.token) {
+    let token = req.query.token;
+    let authurl = 'http://localhost:9000/ocsearch-service/authenticate';
+    request.post({url:authurl, json:{ token }}, function(error, response) {
+      if (!error) {
+        if (response.body.result && !response.body.result.error_code) {
+          next();
+        } else {
+          res.status(403).send(trans.tokenError);
+        }
       } else {
-        user.findOne({
-          where: {name: username},
-        }).then(fuser => {
-          let info = jwt.decode(token, secret_code);
-          if (fuser.dataValues.name === info.name && fuser.dataValues.password === info.password) {
-            next();
-          } else {
-            res.status(500).send(trans.tokenError);
-          }
-        });
+        res.status(400).send(trans.internalError);
       }
-      */
-    } else {
-      next();
-    }
+    });
+  } else if (req.query) {
+    res.status(403).send(trans.tokenError);
+  } else {
+    res.status(400).send(trans.internalError);
   }
 };

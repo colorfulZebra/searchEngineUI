@@ -17,7 +17,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
     // Get schema list by user name
     getUserSchemaList: (user_name) => {
       let schemas = q.defer();
-      http.get(`/api/schema/get/${user_name}`).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.get(`/api/schema/get/${user_name}?token=${token}`).then((data) => {
         schemas.resolve(data);
       }, (err) => {
         schemas.reject(err);
@@ -75,10 +76,22 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
       return schema.promise;
     },
 
+    getExpression: () => {
+      let expression = q.defer();
+      let token = $rootScope.functions.getToken();
+      http.get(`${GLOBAL.host}/expression/list?token=${token}`).then((data) => {
+        expression.resolve(data);
+      }, (err) => {
+        expression.reject(err);
+      });
+      return expression.promise;
+    },
+
     // Services of local mysql
     addSchemaLocal: (schemaname, showfields, owner) => {
       let schema = q.defer();
-      http.post('/api/schema/add', {name: schemaname, showfields: showfields, owner: owner}).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.post(`/api/schema/add?token=${token}`, {name: schemaname, showfields: showfields, owner: owner}).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -88,7 +101,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
 
     deleteSchemaLocal: (schemaname) => {
       let schema = q.defer();
-      http.delete(`/api/schema/delete/${schemaname}`).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.delete(`/api/schema/delete/${schemaname}?token=${token}`).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -98,7 +112,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
 
     getSchemaLocal: () => {
       let schema = q.defer();
-      http.get('/api/schema/list').then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.get(`/api/schema/list?token=${token}`).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -108,7 +123,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
 
     getSchemaLocalByUser: (owner) => {
       let schema = q.defer();
-      http.get(`/api/schema/get/${owner}`).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.get(`/api/schema/get/${owner}?token=${token}`).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);
@@ -118,7 +134,8 @@ angular.module('basic').service('schemaServe', ['$http', '$q', '$rootScope', 'GL
 
     updateSchemaLocal: (schemaname, showfields) => {
       let schema = q.defer();
-      http.put(`/api/schema/update/${schemaname}`, {showfields: showfields}).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.put(`/api/schema/update/${schemaname}?token=${token}`, {showfields: showfields}).then((data) => {
         schema.resolve(data);
       }, (err) => {
         schema.reject(err);

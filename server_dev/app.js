@@ -6,8 +6,8 @@ const config = require('./config');
 const path = require('path');
 const favicon = require('serve-favicon');
 const proxy = require('http-proxy-middleware');
-const cookieParser = require('cookie-parser');
-//const auth = require('./auth');
+//const cookieParser = require('cookie-parser');
+const auth = require('./auth');
 
 let app = express();
 let env = config.env || 'dev';
@@ -19,16 +19,15 @@ if(env === 'dev') {
 
 app.use(express.static(config[env].dist));
 app.use(favicon(path.join(__dirname, '../', config[env].dist, '/favicon.ico')));
-app.use('/ocsearch-service', proxy({target: 'http://10.1.236.142:58080', changeOrigin: true, 'secure': false, logLevel: 'debug'}));
-app.use(cookieParser());
-
-//app.use(auth);
+app.use('/ocsearch-service', proxy({target: 'http://10.1.236.142:58080', changeOrigin: true, 'secure': false }));
+//app.use(cookieParser());
 
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+app.use(auth);
 // REST API for user
 app.use('/api/user', require('./api/user'));
 // REST API for schema

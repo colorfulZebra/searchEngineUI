@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(http, q, GLOBAL) {
+angular.module('basic').service('userServe', ['$http', '$q', '$rootScope', 'GLOBAL', function(http, q, $rootScope, GLOBAL) {
   return {
     login: (name, password) => {
       let user = q.defer();
@@ -15,7 +15,8 @@ angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(
 
     getUserList: () => {
       let users = q.defer();
-      http.get('/api/user/list').then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.get(`/api/user/list?token=${token}`).then((data) => {
         users.resolve(data);
       }, (err) => {
         users.reject(err);
@@ -30,7 +31,8 @@ angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(
         password: password,
         description: description,
       };
-      http.post('/api/user/new', new_user).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.post(`/api/user/new?token=${token}`, new_user).then((data) => {
         user.resolve(data);
       }, (err) => {
         user.reject(err);
@@ -40,7 +42,8 @@ angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(
 
     deleteUser: (name) => {
       let user = q.defer();
-      http.delete(`/api/user/delete/${name}`).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.delete(`/api/user/delete/${name}?token=${token}`).then((data) => {
         user.resolve(data);
       }, (err) => {
         user.reject(err);
@@ -50,7 +53,8 @@ angular.module('basic').service('userServe', ['$http', '$q', 'GLOBAL', function(
 
     updateUser: (name, password) => {
       let user = q.defer();
-      http.put(`/api/user/update/${name}`, {password:password}).then((data) => {
+      let token = $rootScope.functions.getToken();
+      http.put(`/api/user/update/${name}?token=${token}`, {password:password}).then((data) => {
         user.resolve(data);
       }, (err) => {
         user.reject(err);

@@ -5,6 +5,7 @@ angular.module('basic').service('searchServe', ['$http', '$q', '$rootScope', 'GL
     querySearch: (queryContent, queryCondition, start_num, total_num, tables, return_fields) => {
       let dataset = q.defer();
       let token = $rootScope.functions.getToken();
+      let user = $rootScope.functions.getUsername();
       let queryCommand = {
         'query':          queryContent,
         'condition':      queryCondition,
@@ -13,6 +14,7 @@ angular.module('basic').service('searchServe', ['$http', '$q', '$rootScope', 'GL
         'sort':           '',
         'tables':         tables,
         'return_fields':  return_fields,
+        user
       };
       http.post(`${GLOBAL.host}/query/search?token=${token}`, queryCommand).then((data) => {
         dataset.resolve(data);

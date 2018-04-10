@@ -83,7 +83,8 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
    */
   $scope.addTable_init = function() {
     $scope.newtable = new CTable({name:''});
-    $scope.newtable.schema = new CSchema({name: ''});
+    $scope.newtable.schema = new CSchema({name: null});
+    console.log($scope.newtable);
   };
   $scope.addTable_init();
   $scope.addTable = function() {
