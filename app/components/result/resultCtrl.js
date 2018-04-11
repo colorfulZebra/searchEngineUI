@@ -237,7 +237,6 @@ angular.module('basic').controller('ResultCtrl', ['$scope', '$rootScope', '$stat
       $scope.condition = '';
     }
     $scope._choose();
-    //$scope.initial();
   };
   $scope.configItemsPerPage = function() {
     UIkit.offcanvas.hide();

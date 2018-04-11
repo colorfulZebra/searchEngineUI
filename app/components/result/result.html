@@ -50,7 +50,7 @@
     <a class="uk-navbar-brand uk-margin-right" ui-sref="search"><img src="images/ocsearch.png" style="height: 30px;" alt="searchengine" title="searchengine"></a>
     <form class="uk-search uk-margin-small-top" data-uk-search>
       <input class="uk-search-field" type="search" placeholder="{{'SEARCH' | translate}}">
-      <button class="uk-button uk-button-primary">{{'SEARCH' | translate}}</button>
+      <button class="uk-button uk-button-primary" ng-click="search()">{{'SEARCH' | translate}}</button>
     </form>
     <div class="uk-navbar-flip uk-margin-top">
       <a href="javascript:void(0)" class="uk-link-muted ocsearch-header-link" data-uk-offcanvas="{target: '#resultSideBar'}">{{'ADVANCE_CONFIG' | translate}}</a>

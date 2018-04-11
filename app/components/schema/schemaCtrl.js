@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOBAL', '$translate', '$rootScope', '$stateParams', 'schemaServe', 'tableServe', 'CField', 'CSchema', 'CUtil', 'CExpression', 'CExpfunction', function ($scope, $http, $q, GLOBAL, $translate, $rootScope, $stateParams, schemaServe, tableServe, CField, CSchema, CUtil, CExpression, CExpfunction) {
+angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOBAL', '$translate', '$rootScope', '$timeout', '$stateParams', 'schemaServe', 'tableServe', 'CField', 'CSchema', 'CUtil', 'CExpression', 'CExpfunction', function ($scope, $http, $q, GLOBAL, $translate, $rootScope, $timeout, $stateParams, schemaServe, tableServe, CField, CSchema, CUtil, CExpression, CExpfunction) {
 
   $rootScope.global.tab = 'schema';
   /**
@@ -55,7 +55,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
           });
         }
       }
-      // old: initialDisplayStatusByFile -> new: initialDisplayStatusByMysql
       $scope.schemas.map(sc => sc.initialDisplayStatusByMysql(data[1].data));
       if (!$stateParams.linkschema || $stateParams.linkschema === '') {
         $scope.selectSchema(0);
@@ -71,17 +70,6 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
   // When leave the 'Schema' page, save the configuration file that changed!
   $scope.$on('$destroy', function() {
     if (!$rootScope.functions.getUsername()) { return ;}
-    /*
-    let schema_display_obj = {};
-    if (angular.isArray($scope.schemas)) {
-      $scope.schemas.map(sc => schema_display_obj[sc.name]={});
-      $scope.schemas.map(sc => {sc.fields.map(fd => {schema_display_obj[sc.name][fd.name]=fd.enable_in_result;});});
-      if (schema_display_obj && Object.keys(schema_display_obj).length === $scope.schemas.length) {
-        console.log(schema_display_obj);
-        schemaServe.setSchemaConfig(schema_display_obj);
-      }
-    }
-    */
     let update_lst = [];
     if (angular.isArray($scope.schemas)) {
       $scope.schemas.map(sc => {
@@ -377,20 +365,27 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     }
   };
   $scope.addSchema_ok = function() {
-    schemaServe.addSchema(this.newschema.storedJson()).then((data) => {
-      if (data.data.result.error_code !== 0) {
-        $scope.initial();
-        UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
-      } else {
-        schemaServe.addSchemaLocal(this.newschema.name, '', $scope.username).then(() => {
+    UIkit.modal.confirm($translate.instant('CONFIRM_ADD_SCHEMA'), function() {
+      schemaServe.addSchema($scope.newschema.storedJson()).then((data) => {
+        if (data.data.result.error_code !== 0) {
           $scope.initial();
-          UIkit.notify($translate.instant('ADD_NEW_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
-        });
+          UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
+        } else {
+          schemaServe.addSchemaLocal($scope.newschema.name, '', $scope.username).then(() => {
+            $scope.initial();
+            UIkit.notify($translate.instant('ADD_NEW_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
+          });
+        }
+      });
+      if (schemaDlg.isActive()) {
+        schemaDlg.hide();
+      }
+    }, {
+      labels: {
+        'Ok': yes_text,
+        'Cancel': no_text
       }
     });
-    if (schemaDlg.isActive()) {
-      schemaDlg.hide();
-    }
   };
   /**
    * Functions of edit schema
@@ -444,30 +439,38 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
     }
   };
   $scope.editSchema_ok = function() {
-    let schema_added = this.newschema.storedJson();
-    schemaServe.deleteSchema($scope.page.schema.name).then(() => {
-      schemaServe.addSchema(schema_added).then((data) => {
-        if (data.data.result.error_code !== 0) {
-          // delete schema succeful but new schema failed
-          //UIkit.modal.alert(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
-          schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
-            $scope.initial();
-            UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
-          });
-        } else {
-          // delete & new schema successful in remote server.
-          schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
-            schemaServe.addSchemaLocal(schema_added.name, '', $scope.username).then(() => {
+    UIkit.modal.confirm($translate.instant('CONFIRM_EDIT_SCHEMA'), function() {
+      let schema_added = $scope.newschema.storedJson();
+      schemaServe.deleteSchema($scope.page.schema.name).then(() => {
+        schemaServe.addSchema(schema_added).then((data) => {
+          if (data.data.result.error_code !== 0) {
+            // delete schema succeful but new schema failed
+            schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
               $scope.initial();
-              UIkit.notify($translate.instant('EDIT_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
+              UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
             });
-          });
-        }
+          } else {
+            // delete & new schema successful in remote server.
+            schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
+              schemaServe.addSchemaLocal(schema_added.name, '', $scope.username).then(() => {
+                $timeout(()=>{
+                  $scope.initial();
+                  UIkit.notify($translate.instant('EDIT_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
+                }, 2000);
+              });
+            });
+          }
+        });
       });
+      if (schemaDlg.isActive()) {
+        schemaDlg.hide();
+      }
+    }, {
+      labels: {
+        'Ok': yes_text,
+        'Cancel': no_text
+      }
     });
-    if (schemaDlg.isActive()) {
-      schemaDlg.hide();
-    }
   };
   /**
    * Select a schema
