@@ -83,7 +83,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
    */
   $scope.addTable_init = function() {
     $scope.newtable = new CTable({name:''});
-    $scope.newtable.schema = new CSchema({name: null});
+    //$scope.newtable.schema = new CSchema({name: null});
   };
   $scope.addTable_init();
   $scope.addTable = function() {
@@ -125,9 +125,6 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   };
   $scope.addTable_ok = function() {
     UIkit.modal.confirm(create_table_text, function() {
-      if (addTableDlg.isActive()) {
-        addTableDlg.hide();
-      }
       tableServe.createTable($scope.newtable.storedJson()).then((data) => {
         if (data.data.result.error_code !== 0) {
           //UIkit.modal.alert(`${create_table_err}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
@@ -138,6 +135,9 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
           UIkit.notify($translate.instant('ADD_NEW_TABLE_SUCCESS'), {status: 'success', timeout: 3000});
         }
       });
+      if (addTableDlg.isActive()) {
+        addTableDlg.hide();
+      }
     }, {
       labels: {
         'Ok': yes_text,
@@ -231,13 +231,25 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
       }
     }
   };
+  $scope.checkEditTable = function() {
+    if (angular.isDefined($scope.curschema)) {
+      if ($scope.curschema.fields === null || $scope.curschema.fields.length === 0) {
+        //$scope.modalmsg = "No fields of schema defined!";
+        $scope.modalmsg = $translate.instant('MODALMSG_NO_FIELDS');
+        return false;
+      } else {
+        $scope.modalmsg = '';
+        return true;
+      }
+    }
+  };
   $scope.editTable_ok = function() {
-    UIkit.modal(edit_table_text, function() {
+    UIkit.modal.confirm(edit_table_text, function() {
       if (editTableDlg.isActive()) {
         editTableDlg.hide();
         $scope._diffSchema();
         $scope._httpInQueue(0);
-        //$scope.initial();
+        $scope.initial();
       }
     }, {
       labels: {
@@ -245,6 +257,9 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
         'Cancel': no_text
       }
     });
+  };
+  $scope.editTable_cancel = function() {
+    $scope.curschema = angular.copy($scope.page.table.schema);
   };
   /**
    * Delete table

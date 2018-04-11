@@ -446,8 +446,10 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
           if (data.data.result.error_code !== 0) {
             // delete schema succeful but new schema failed
             schemaServe.deleteSchemaLocal($scope.page.schema.name).then(() => {
-              $scope.initial();
-              UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
+              $timeout(() => {
+                $scope.initial();
+                UIkit.notify(`${$translate.instant('CONFIRM_TITLE_CREATE_SCHEMA_ERROR')}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
+              }, 10000);
             });
           } else {
             // delete & new schema successful in remote server.
@@ -456,7 +458,7 @@ angular.module('basic').controller('SchemaCtrl', ['$scope', '$http', '$q', 'GLOB
                 $timeout(()=>{
                   $scope.initial();
                   UIkit.notify($translate.instant('EDIT_SCHEMA_SUCCESS'), {status: 'success', timeout: 3000});
-                }, 2000);
+                }, 10000);
               });
             });
           }

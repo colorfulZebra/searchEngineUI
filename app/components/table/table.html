@@ -18,7 +18,7 @@
         <label class="uk-form-label">{{'SCHEMA' | translate}} *</label>
         <div class="uk-form-controls">
           <select class="uk-width-1-1" ng-model="newtable.schema" ng-options="schema as schema.name for schema in schemas" ng-change="newtable.clearValue()">
-            <!--<option value="">&lt;{{'SELECT_SCHEMA' | translate}}&gt;</option>-->
+            <option value="">&lt;{{'SELECT_SCHEMA' | translate}}&gt;</option>
           </select>
         </div>
       </div>
@@ -170,8 +170,8 @@
           <b style="color: red;">{{modalmsg | translate}}</b>
         </div>
         <div class="uk-float-right">
-          <button class="uk-button uk-button-success" type="button" ng-click="" ng-disabled="!checkEditTable()">{{'OK' | translate}}</button>
-          <button class="uk-button uk-button-primary uk-modal-close" type="button" ng-click="">{{'CANCEL' | translate}}</button>
+          <button class="uk-button uk-button-success" type="button" ng-click="editTable_ok()" ng-disabled="!checkEditTable()">{{'OK' | translate}}</button>
+          <button class="uk-button uk-button-primary uk-modal-close" type="button" ng-click="editTable_cancel()">{{'CANCEL' | translate}}</button>
         </div>
       </div>
     </div>
