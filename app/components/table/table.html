@@ -123,7 +123,7 @@
       <div class="uk-clearfix uk-margin-top uk-margin-bottom">
         <div class="uk-float-right">
           <button class="uk-button uk-button-success" ng-if="!editModeFlag" ng-click="curschema.addField(curfield)" ng-disabled="!checkField()"><i class="fas fa-plus"></i></button>
-          <button class="uk-button uk-button-success" ng-if="editModeFlag" ng-click="saveField()" ng-disabled="curschema.fields[curindex].equals(curfield) || !checkField(false)"><i class="fas fa-save"></i></button>
+          <button class="uk-button uk-button-success" ng-if="editModeFlag" ng-click="saveField()" ng-disabled="!checkField(false)"><i class="fas fa-save"></i></button>
           <button class="uk-button uk-button-danger" ng-if="editModeFlag" ng-click="cancelEdit()"><i class="fas fa-times"></i></button>
         </div>
       </div>

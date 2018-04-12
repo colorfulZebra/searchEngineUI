@@ -154,6 +154,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   $scope.editTable_init = function() {
     $scope.request_list = [];
     $scope.curfield = new CField({name: ''});
+    $scope.editModeFlag = false;
   };
   $scope.editTable_init();
   $scope.editTable = function() {
@@ -167,6 +168,11 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
     $scope.editModeFlag = true;
     $scope.curindex = index;
     $scope.curfield = angular.copy($scope.curschema.fields[index]);
+    if ($scope.curfield.index_type === '') {
+      $scope.curfield.index_type = null;
+    } else if ($scope.curfield.content_field === '') {
+      $scope.curfield.content_field = null;
+    }
   };
   $scope.cancelEdit = function() {
     $scope.curfield.emptyField();
@@ -188,7 +194,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
     } else if (tables.includes($scope.curfield.name) && flag) {
       return false;
     } else {
-      return $scope.curfield.validate();
+      return $scope.curfield.validate(true);
     }
   };
   $scope._diffSchema = function() {
@@ -260,6 +266,7 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   };
   $scope.editTable_cancel = function() {
     $scope.curschema = angular.copy($scope.page.table.schema);
+    $scope.editModeFlag = false;
   };
   /**
    * Delete table
