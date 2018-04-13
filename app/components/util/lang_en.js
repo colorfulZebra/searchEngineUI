@@ -141,6 +141,8 @@ angular.module('basic').config(['$translateProvider', function($translateProvide
     MODALMSG_SCHEMA_INVALIDATE: 'Invalidate schema name',
     MODALMSG_TABLE_INVALIDATE: 'Invalidate table name',
     MODALMSG_OPTION_FIELD_TIP: 'Field name started with underline or letters, more than 2 characters, no repeat field allowed',
+    MODALMSG_DELETE_TABLE_ERROR: 'Delete table error',
+    MODALMSG_DELETE_TABLE_SUCCESS: 'Delete table success',
     CONFIRM_LOGOUT: 'Are you sure to logout?',
     CONFIRM_ADD_TABLE: 'Create table now?',
     CONFIRM_ADD_USER: 'Create user now?',

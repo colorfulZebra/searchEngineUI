@@ -141,6 +141,8 @@ angular.module('basic').config(['$translateProvider', function($translateProvide
     MODALMSG_SCHEMA_INVALIDATE: '表结构名由下划线、字母开头，包含下划线、字母、数字，长度不低于4',
     MODALMSG_TABLE_INVALIDATE: '表名由下划线、字母开头，包含下划线、字母、数字，长度不低于4',
     MODALMSG_OPTION_FIELD_TIP: '字段名由字母或下划线开头，长度不低于2，不能有重名字段',
+    MODALMSG_DELETE_TABLE_ERROR: '删除表失败',
+    MODALMSG_DELETE_TABLE_SUCCESS: '删除表成功',
     CONFIRM_LOGOUT: '确定登出？',
     CONFIRM_ADD_TABLE: '新建表？',
     CONFIRM_ADD_USER: '新建用户？',

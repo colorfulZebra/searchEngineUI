@@ -126,14 +126,14 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   $scope.addTable_ok = function() {
     UIkit.modal.confirm(create_table_text, function() {
       tableServe.createTable($scope.newtable.storedJson()).then((data) => {
-        if (data.data.result.error_code !== 0) {
-          //UIkit.modal.alert(`${create_table_err}: ${data.data.result.error_desc}`, {labels: { 'Ok': ok_text }});
-          $scope.initial();
+        if (data.data.result && data.data.result.error_code !== 0) {
           UIkit.notify(`${create_table_err}: ${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
-        } else {
-          $scope.initial();
+        } else if (data.data.result) {
           UIkit.notify($translate.instant('ADD_NEW_TABLE_SUCCESS'), {status: 'success', timeout: 3000});
+        } else {
+          UIkit.notify(`${create_table_err}`, {status: 'danger', timeout: 10000});
         }
+        $scope.initial();
       });
       if (addTableDlg.isActive()) {
         addTableDlg.hide();
@@ -229,12 +229,11 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
       }
       if (err_flag) {
         //UIkit.modal.alert(`${edit_table_err}:\n ${result_lst.join('\n')}`, {labels: { 'Ok': ok_text }});
-        $scope.initial();
         UIkit.notify(`${edit_table_err}:\n ${result_lst.join('\n')}`, {status: 'danger', timeout: 10000});
       } else {
-        $scope.initial();
         UIkit.notify($translate.instant('EDIT_TABLE_FIELDS_SUCCESS'), {status: 'success', timeout: 3000});
       }
+      $scope.initial();
     }
   };
   $scope.checkEditTable = function() {
@@ -274,7 +273,14 @@ angular.module('basic').controller('TableCtrl', ['$scope', '$http', '$q', 'GLOBA
   $scope.deleteTable = function() {
     if (!$rootScope.functions.initial()) { return; }
     UIkit.modal.confirm(delete_table_text, function() {
-      tableServe.deleteTable($scope.page.table.name).then(() => {
+      tableServe.deleteTable($scope.page.table.name).then((data) => {
+        if (data.data.result && data.data.result.error_code!==0) {
+          UIkit.notify(`${$translate.instant('MODALMSG_DELETE_TABLE_ERROR')}:${data.data.result.error_desc}`, {status: 'danger', timeout: 10000});
+        } else if (data.data.result) {
+          UIkit.notify($translate.instant('MODALMSG_DELETE_TABLE_SUCCESS'), {status: 'success', timeout: 3000});
+        } else {
+          UIkit.notify($translate.instant('MODALMSG_DELETE_TABLE_ERROR'), {status: 'danger', timeout: 10000});
+        }
         $scope.initial();
       });
     }, {
